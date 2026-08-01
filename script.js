@@ -385,6 +385,11 @@
     state.currentPoemIndex = index;
     const poem = state.allPoems[index];
 
+    const modalContainer = els.poemModal.querySelector('.modal-container');
+    if (modalContainer) {
+      modalContainer.scrollTop = 0;
+    }
+
     // 更新翻页按钮状态
     if (els.btnPrevPoem) els.btnPrevPoem.disabled = (index === 0);
     if (els.btnNextPoem) els.btnNextPoem.disabled = (index === state.allPoems.length - 1);
