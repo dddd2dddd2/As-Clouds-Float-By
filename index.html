@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="《云浮集》— 莫问春迟，且看云浮。古典诗词合集在线展示。">
+  <meta name="keywords" content="云浮集,古典诗词,词,宋词,诗集,As Clouds Float By">
+  <meta name="theme-color" content="#0a0a0f">
+  <title>云浮集 — As Clouds Float By</title>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ========== Navigation ========== -->
+  <nav id="main-nav">
+    <div class="nav-inner">
+      <a class="nav-brand" href="#hero">云浮集</a>
+      <div class="nav-links" id="nav-links">
+        <a class="nav-link" href="#hero">首页</a>
+        <a class="nav-link" href="#collection">诗集</a>
+        <a class="nav-link" href="#about">关于</a>
+        <button class="nav-btn" id="btn-create">✦ 新建作品</button>
+      </div>
+      <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="菜单">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ========== Hero ========== -->
+  <section id="hero">
+    <div class="hero-bg">
+      <div class="ink-blob ink-1"></div>
+      <div class="ink-blob ink-2"></div>
+      <div class="ink-blob ink-3"></div>
+    </div>
+    <div class="hero-content">
+      <p class="hero-en">As Clouds Float By</p>
+      <h1 class="hero-title">云 浮 集</h1>
+      <div class="hero-divider"></div>
+      <p class="hero-quote">莫问春迟，且看云浮</p>
+      <p class="hero-sub-quote">浮云也有归时节</p>
+      <a class="hero-cta" href="#collection">
+        <span>进入诗集</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M7 17L17 7M17 7H7M17 7V17"/>
+        </svg>
+      </a>
+    </div>
+    <div class="scroll-hint">
+      <span>向下滚动</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- ========== Filter ========== -->
+  <section id="filter-section">
+    <div class="filter-bar">
+      <div class="filter-group">
+        <label for="filter-genre">体裁</label>
+        <select id="filter-genre">
+          <option value="all">全部体裁</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label for="filter-rating">评分</label>
+        <select id="filter-rating">
+          <option value="0">全部评分</option>
+          <option value="1">≥ 1 星</option>
+          <option value="2">≥ 2 星</option>
+          <option value="3">≥ 3 星</option>
+          <option value="4">≥ 4 星</option>
+          <option value="5">5 星</option>
+        </select>
+      </div>
+      <div class="filter-group search-group">
+        <input type="text" id="search-input" placeholder="搜索诗句、标题…">
+      </div>
+      <div class="filter-group">
+        <button class="btn-layout" id="btn-toggle-layout" title="切换竖排/横排">
+          <span class="layout-icon">竖</span>
+        </button>
+      </div>
+    </div>
+    <div class="volume-tabs" id="volume-tabs">
+      <!-- JS 动态生成 -->
+    </div>
+    <div class="filter-stats" id="filter-stats"></div>
+  </section>
+
+  <!-- ========== Poems Collection ========== -->
+  <section id="collection">
+    <div class="poems-container" id="poems-container">
+      <div class="loading-spinner" id="loading">
+        <div class="spinner"></div>
+        <p>载入诗集…</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== About ========== -->
+  <section id="about">
+    <div class="about-inner reveal">
+      <h2 class="section-title">关于《云浮集》</h2>
+      <div class="about-content">
+        <div class="about-text">
+          <p>《云浮集》，取意 <em>"莫问春迟，且看云浮"</em>，收录古体诗词，分四卷编次：</p>
+          <ul>
+            <li><strong>卷一 · 婉约怀人</strong> — 旧梦罗衣，灯影月痕</li>
+            <li><strong>卷二 · 剑气豪情</strong> — 孤铁寒棂，未销之兵</li>
+            <li><strong>卷三 · 汉魏高古</strong> — 尺素乐府，高木故园</li>
+            <li><strong>卷四 · 人间烟火</strong> — 失衾之趣，寒村晚照</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Footer ========== -->
+  <footer id="footer">
+    <div class="footer-inner">
+      <p class="footer-title">云浮集 · As Clouds Float By</p>
+      <p class="footer-sub">莫问春迟，且看云浮</p>
+    </div>
+  </footer>
+
+  <!-- ========== Poem Detail Modal ========== -->
+  <div class="modal" id="poem-modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-container">
+      <button class="modal-close" aria-label="关闭">&times;</button>
+      <div class="modal-body">
+        <div class="poem-header">
+          <h2 class="poem-detail-title"></h2>
+          <div class="poem-meta">
+            <span class="poem-genre-badge"></span>
+            <span class="poem-volume-badge"></span>
+          </div>
+          <div class="poem-rating" id="poem-rating"></div>
+        </div>
+        <div class="poem-content-area">
+          <div class="poem-text"></div>
+        </div>
+        <div class="poem-images-section">
+          <div class="poem-images-gallery" id="poem-images-gallery"></div>
+          <button class="btn-add-image" id="btn-add-image">+ 添加配图</button>
+          <input type="file" id="image-upload" accept="image/*" multiple hidden>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== Create Poem Modal ========== -->
+  <div class="modal" id="create-modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-container create-container">
+      <button class="modal-close" aria-label="关闭">&times;</button>
+      <h2 class="modal-title">✦ 新建作品</h2>
+      <form id="create-form">
+        <div class="form-group">
+          <label for="create-title">作品名称</label>
+          <input type="text" id="create-title" placeholder="如：一剪梅·秋思" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="create-genre">体裁 / 词牌</label>
+            <select id="create-genre">
+              <option value="一剪梅">一剪梅</option>
+              <option value="蝶恋花">蝶恋花</option>
+              <option value="临江仙">临江仙</option>
+              <option value="行香子">行香子</option>
+              <option value="卜算子">卜算子</option>
+              <option value="浣溪沙">浣溪沙</option>
+              <option value="鹧鸪天">鹧鸪天</option>
+              <option value="五古">五言古诗</option>
+              <option value="七古">七言古诗</option>
+              <option value="乐府">乐府</option>
+              <option value="五律">五言律诗</option>
+              <option value="七律">七言律诗</option>
+              <option value="五绝">五言绝句</option>
+              <option value="七绝">七言绝句</option>
+              <option value="custom">其他（手动输入）</option>
+            </select>
+            <input type="text" id="create-genre-custom" class="hidden" placeholder="输入自定义体裁">
+          </div>
+          <div class="form-group">
+            <label for="create-volume">所属卷</label>
+            <select id="create-volume">
+              <option value="1">卷一 · 婉约怀人</option>
+              <option value="2">卷二 · 剑气豪情</option>
+              <option value="3">卷三 · 汉魏高古</option>
+              <option value="4">卷四 · 人间烟火</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="create-content">诗词正文</label>
+          <textarea id="create-content" rows="10" placeholder="请输入诗词正文…" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>配图（可选）</label>
+          <div class="file-upload-area" id="file-upload-area">
+            <p>点击选择或拖拽图片到此处</p>
+            <input type="file" id="create-images" accept="image/*" multiple>
+          </div>
+          <div class="create-images-preview" id="create-images-preview"></div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">保存作品</button>
+          <button type="button" class="btn-secondary" id="btn-cancel-create">取消</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========== Lightbox ========== -->
+  <div class="lightbox" id="lightbox">
+    <div class="lightbox-overlay"></div>
+    <button class="lightbox-close" aria-label="关闭">&times;</button>
+    <button class="lightbox-prev" aria-label="上一张">‹</button>
+    <button class="lightbox-next" aria-label="下一张">›</button>
+    <img class="lightbox-image" id="lightbox-image" alt="诗词配图">
+  </div>
+
+  <!-- ========== Toast ========== -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
