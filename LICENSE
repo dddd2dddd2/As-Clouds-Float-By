@@ -1,0 +1,73 @@
+# 私有许可协议（Private License）
+
+Copyright (c) 2026 · dddd2dddd2 / hippohippo-ai · 《云浮集》作者（以下简称"作者"） / *author of "As Clouds Float By" (hereafter "the Author")*
+All Rights Reserved. / 保留所有权利。
+
+## 一、范围 / Scope
+
+本许可适用于本仓库内的全部内容，包括但不限于：全部诗文与文字作品（Markdown 源文件、`index.json`）、网页源码（HTML / CSS / JavaScript）、Python 脚本、图片及其他资源文件。
+
+*This license applies to all content in this repository, including but not limited to: all poems and written works (Markdown source files, `index.json`), web source code (HTML / CSS / JavaScript), Python scripts, images, and other resource files.*
+
+## 二、授予的权限 / Granted Rights
+
+仅授予您一项有限、不可再许可、不可转让的权限：
+
+*Only one limited, non-sublicensable, and non-transferable right is granted:*
+
+1. **展示浏览 / Display and Reading**：在作者授权的渠道（或经作者书面同意的个人非公开环境）中，以原文、原貌展示和阅读本作品。
+   *Display and read the work in its original form on channels authorized by the Author (or in a personal, non-public environment with the Author's written consent).*
+
+除此之外，**不授予任何其他权利**。
+
+*Apart from the above, **no other rights are granted**.*
+
+## 三、明确禁止的行为 / Prohibited Acts
+
+未经作者事先书面授权，禁止任何人：
+
+*Without the Author's prior written authorization, no one may:*
+
+1. 复制、摘录、改编、翻译、改写本作品的任何部分（包括单首诗、单段文字）；
+   *Reproduce, excerpt, adapt, translate, or rewrite any part of the work (including a single poem or a single passage);*
+2. 以任何形式转载、发布、传播、分发或公开展示本作品；
+   *Republish, post, transmit, distribute, or publicly display the work in any form;*
+3. 将本作品用于任何商业目的，或任何收费、筹款、广告、营销场景；
+   *Use the work for any commercial purpose, or in any paid, fundraising, advertising, or marketing context;*
+4. 对作品进行修改、编辑、合成、二次创作或衍生创作；
+   *Modify, edit, remix, or create derivative works based on the work;*
+5. 将本作品用于人工智能训练、数据集构建、模型微调或任何自动化分析用途；
+   *Use the work for AI training, dataset construction, model fine-tuning, or any automated analysis purpose;*
+6. 删除、篡改或以任何方式掩盖作品中的署名、版权声明或本许可文本；
+   *Remove, alter, or conceal in any way the attribution, copyright notice, or this license text;*
+7. 对本作品的网页源码进行反向工程、复制或提取。
+   *Reverse-engineer, copy, or extract the web source code of the work.*
+
+## 四、版权归属 / Ownership
+
+本作品的全部著作权、署名权及相关权益归作者所有。任何使用均须注明作者署名，且不得损害作者的声誉或精神权利。
+
+*All copyright, moral rights, and related rights in the work belong to the Author. Any use must credit the Author and must not harm the Author's reputation or moral rights.*
+
+## 五、免责声明 / Disclaimer
+
+本作品按"原样"提供，作者不作任何明示或默示的担保（包括但不限于适销性、特定用途适用性）。在任何情况下，作者均不对因使用或无法使用本作品而产生的任何直接、间接、附带或后果性损害承担责任。
+
+*The work is provided "as is," without any express or implied warranty (including, but not limited to, merchantability or fitness for a particular purpose). In no event shall the Author be liable for any direct, indirect, incidental, or consequential damages arising from the use of or inability to use the work.*
+
+## 六、授权与违约 / Authorization and Breach
+
+如需任何本许可未明确授予的用途，须事先取得作者的书面授权。违反本许可的任何行为均构成侵权，作者保留追究法律责任（包括但不限于要求停止侵害、赔偿损失）的权利。
+
+*Any use not expressly granted by this license requires the Author's prior written consent. Any act violating this license constitutes infringement, and the Author reserves the right to pursue legal remedies (including, but not limited to, injunctive relief and damages).*
+
+## 七、其他 / Miscellaneous
+
+本许可的任何条款如被认定为无效或不可执行，不影响其余条款的效力。本许可受中华人民共和国法律管辖。
+
+*If any provision of this license is held to be invalid or unenforceable, the remaining provisions shall remain in full force and effect. This license shall be governed by the laws of the People's Republic of China.*
+
+---
+
+*保留所有权利。除展示浏览外，任何使用均需作者书面授权。*
+*All rights reserved. Any use other than display and reading requires the Author's written authorization.*
