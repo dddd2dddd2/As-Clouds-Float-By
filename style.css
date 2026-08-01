@@ -416,6 +416,7 @@ body {
   box-shadow: none !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   -webkit-appearance: none;
+  appearance: none;
 }
 
 /* 占位提示词样式 */
@@ -670,6 +671,7 @@ body {
   text-align: center;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3; 
   -webkit-box-orient: vertical;
   overflow: hidden;
   margin-bottom: 16px;
@@ -732,6 +734,7 @@ body {
   max-height: 90vh;
   overflow-y: auto;
   overflow-x: hidden !important;
+  direction: ltr !important;
   box-shadow: var(--shadow-card);
   transform: translateY(20px);
   transition: transform var(--transition);
@@ -742,6 +745,7 @@ body {
   padding: 40px 60px;
   overflow-x: hidden !important;
   width: 100%;
+  direction: ltr !important;
 }
 
 .modal.active .modal-container {
@@ -770,6 +774,22 @@ body {
   text-align: center;
   font-size: 1.8rem;
   margin-bottom: 2rem;
+}
+
+/* ==================== 1. 彻底锁定唯一竖向滚动条 ==================== */
+/* 强制所有内部容器禁止产生竖向滚动条，只由外层 modal-container 统管滚动 */
+.modal-body,
+.poem-header,
+.poem-content-area,
+.poem-text,
+.poem-footer-details,
+.poem-images-section {
+  overflow-y: visible !important;
+}
+
+.modal-container {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
 }
 
 /* 典藏翻页控制栏 */
@@ -867,83 +887,31 @@ body {
   margin: 24px 0;
 }
 
+/* ==================== 2. 取消定高，修复间距太拉远 ==================== */
 .poem-content-area {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;                     /* 容器居中 */
-  justify-content: center;
-  text-align: center !important;
-  margin: 1.5rem 0;
-}
-
-/* ==================== 竖排模式：确保水平滚动条清晰可见 ==================== */
-.poem-content-area.vertical-mode {
-  overflow-x: auto !important;     /* 强制启用水平滚动 */
-  overflow-y: hidden !important;
-  padding: 1.5rem 0 1.2rem 0;
-  display: flex;
-  direction: rtl;                  /* 保持从右往左的传统古籍序位（flex-start 即右对齐） */
-  width: 100%;
-  box-sizing: border-box;
-
-  /* 火狐浏览器（Firefox）滚动条高亮设置 */
-  scrollbar-width: thin !important;
-  scrollbar-color: var(--accent-gold) rgba(255, 255, 255, 0.05) !important;
-}
-
-/* Chrome / Safari / Edge 专属 WebKit 水平滚动条样式 */
-.poem-content-area.vertical-mode::-webkit-scrollbar {
-  height: 10px !important;          /* 加厚滚动条高度，方便辨识与鼠标拖拽 */
-  display: block !important;
-}
-
-.poem-content-area.vertical-mode::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05) !important; /* 滚动条底槽 */
-  border-radius: 10px;
-  margin: 0 20px;
-}
-
-.poem-content-area.vertical-mode::-webkit-scrollbar-thumb {
-  background: var(--accent-gold) !important;        /* 淡金色醒目滑块 */
-  border-radius: 10px;
-  border: 2px solid var(--bg-modal);                /* 外围内衬 */
-}
-
-.poem-content-area.vertical-mode::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-gold-hover) !important;  /* 悬停高亮 */
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 1rem 0;
+  display: block;
+  text-align: center;
 }
 
 .poem-text {
   width: 100%;
+  height: auto !important;
+  min-height: 0 !important;
   font-family: var(--font-body);
-  font-size: clamp(1.05rem, 4vw, 1.35rem); /* 移动端自适应字号 */
-  line-height: 2.2;
+  font-size: clamp(1.05rem, 4vw, 1.3rem);
+  line-height: 2;
   color: var(--text-primary);
-  text-align: center !important;           /* 文本绝对居中 */
-  margin: 0 auto;
-}
-
-.poem-text.vertical {
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  height: 400px;       /* 固定的竖排文字高度 */
-  white-space: nowrap; /* 阻止列内不必要换行 */
-  padding: 10px 30px;
-  margin-left: auto;   /* 将诗词内容推向最右侧 */
-  margin-right: 0;
-  direction: ltr;      /* 恢复文字标点内部方向 */
-  display: inline-block !important;
-  min-width: max-content !important; /* 关键：按诗词实际字数撑开宽度，精准触发滚动条 */
-  flex-shrink: 0 !important;         /* 禁止 Flexbox 压缩宽度 */
-  line-height: 2.5;
-  letter-spacing: 0.1em;
-  text-align: left;
+  text-align: center !important;
+  margin: 0 auto !important;
 }
 
 .poem-line {
   width: 100%;
-  text-align: center !important;           /* 每一排居中 */
+  text-align: center !important;
   margin-bottom: 0.6rem;
   display: block;
 }
@@ -951,11 +919,68 @@ body {
 .poem-clause {
   display: inline-block;
   white-space: nowrap;
-  text-align: center !important;           /* 半句居中 */
+  text-align: center !important;
+}
+
+/* ==================== 3. 桌面端竖排才启用定高与水平滚动 ==================== */
+@media (min-width: 769px) {
+  .poem-content-area.vertical-mode {
+    direction: rtl !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding: 1.5rem 0;
+    width: 100%;
+  }
+
+  .poem-text.vertical {
+    writing-mode: vertical-rl !important;
+    text-orientation: mixed;
+    height: 380px !important;
+    white-space: nowrap;
+    padding: 10px 30px;
+    margin-left: auto !important;  /* 诗集整体靠右展示 */
+    margin-right: 0 !important;
+    direction: ltr;
+    display: inline-block !important;
+    min-width: max-content !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+/* ==================== 4. 移动端归一化：紧凑横排 ==================== */
+@media (max-width: 768px) {
+  .poem-content-area,
+  .poem-content-area.vertical-mode {
+    overflow: visible !important;
+    direction: ltr !important;
+    padding: 0 !important;
+    margin: 0.8rem 0 !important;
+  }
+
+  .poem-text,
+  .poem-text.vertical {
+    writing-mode: horizontal-tb !important;
+    height: auto !important;
+    min-height: 0 !important;
+    text-align: center !important;
+    margin: 0 auto !important;
+  }
 }
 
 .poem-text.vertical .poem-line {
-  margin-bottom: 0;
+  display: block !important;          /* 1. 强制每一句诗独立为一竖列（自右向左） */
+  width: max-content !important;     /* 2. 列厚度自适应字宽，决不撑满屏幕 */
+  height: auto !important;           /* 列高度按字数自适应 */
+  margin-left: 1.6rem !important;     /* 3. 列与列之间优雅的水平间距（约 26px） */
+  margin-right: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  text-align: left !important;
+}
+
+.poem-text.vertical .poem-clause {
+  display: inline !important;         /* 列内文字自上而下顺畅接续 */
+  white-space: nowrap !important;
 }
 
 /* 创作时间与地点 */
@@ -1452,21 +1477,6 @@ body {
 
   .poems-grid {
     grid-template-columns: 1fr;
-  }
-
-  .poem-text.vertical,
-  .poem-text {
-    writing-mode: horizontal-tb !important;
-    height: auto !important;
-    text-align: center !important;
-    margin: 0 auto !important;
-  }
-
-  .poem-content-area.vertical-mode,
-  .poem-content-area {
-    overflow-x: hidden !important;
-    direction: ltr !important;
-    display: block !important;
   }
 
   .filter-bar {

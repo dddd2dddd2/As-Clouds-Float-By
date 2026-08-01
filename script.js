@@ -60,15 +60,33 @@
     return window.innerWidth <= 768;
   }
 
-  // 竖排模式下：将滚动位置对齐到最右侧（诗词第一句的起始位置）。
-  // 内容区为 direction: rtl，其水平滚动对应 inline 轴，inline-start 即最右（第一句）。
+  // 竖排模式下：将水平滚动位置对齐到最右侧（诗词第一句的起始位置）。
   function scrollVerticalToStart() {
-    if (!els.poemContentArea || !els.poemText) return;
+    if (!els.poemContentArea) return;
     requestAnimationFrame(() => {
-      const firstLine = els.poemText.querySelector('.poem-line');
-      if (firstLine) {
-        firstLine.scrollIntoView({ inline: 'start' });
+      if (state.isVertical && !isMobileScreen()) {
+        els.poemContentArea.scrollLeft = els.poemContentArea.scrollWidth;
+      } else {
+        els.poemContentArea.scrollLeft = 0;
       }
+    });
+  }
+
+  function resetReaderScrollPositions() {
+    const modalContainer = els.poemModal ? els.poemModal.querySelector('.modal-container') : null;
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        if (modalContainer) {
+          modalContainer.scrollTop = 0;
+        }
+        if (els.poemContentArea) {
+          if (state.isVertical && !isMobileScreen()) {
+            els.poemContentArea.scrollLeft = els.poemContentArea.scrollWidth;
+          } else {
+            els.poemContentArea.scrollLeft = 0;
+          }
+        }
+      }, 60);
     });
   }
 
@@ -221,7 +239,7 @@
 
   // ===== 渲染诗词配图画廊 =====
   async function renderPoemImages(poemId) {
-    if (!els.poemImagesGallery) return;
+    if (!els.poemImagesGallery) return [];
     els.poemImagesGallery.innerHTML = '';
 
     const poem = state.allPoems.find(p => p.id === poemId);
@@ -269,6 +287,15 @@
       item.appendChild(delBtn);
       els.poemImagesGallery.appendChild(item);
     });
+
+    const imageElements = Array.from(els.poemImagesGallery.querySelectorAll('img'));
+    await Promise.all(imageElements.map(img => {
+      if (img.complete) return Promise.resolve();
+      return new Promise(resolve => {
+        img.addEventListener('load', resolve, { once: true });
+        img.addEventListener('error', resolve, { once: true });
+      });
+    }));
 
     return allUrls;
   }
@@ -490,10 +517,8 @@
     // 激活弹窗
     openReader();
 
-    // 竖排模式下：初始化水平滚动条到【最右侧】（即诗词第一句的起始位置）
-    if (state.isVertical && els.poemContentArea) {
-      scrollVerticalToStart();
-    }
+    // 所有内容（含异步配图）就绪后，再精确重置双滚动条位置
+    resetReaderScrollPositions();
 
     // 演播动画全部结束后自动标记完成，此后点击直接关闭
     if (state.isCinematic) {
