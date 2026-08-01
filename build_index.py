@@ -19,7 +19,7 @@ POETRY_DIR = "云浮集_YunFuJi"
 OUTPUT_FILE = "index.json"
 
 # 跳过的子目录（非诗词内容）
-SKIP_DIRS = {"05_设计与排版装帧", "06_灵感与未完草稿箱"}
+SKIP_DIRS = {"05_设计与排版装帧", "06_灵感与未完草稿箱", "07_其他"}
 
 # 前言目录（单独处理，不计入诗词）
 PREFACE_DIR = "00_总纲与序言"
@@ -176,20 +176,16 @@ def build_index():
     for vol_dir in sorted(poetry_root.iterdir()):
         if not vol_dir.is_dir():
             continue
-        if vol_dir.name in SKIP_DIRS or vol_dir.name == PREFACE_DIR:
+        if vol_dir.name in SKIP_DIRS or vol_dir.name == PREFACE_DIR or vol_dir.name.startswith("07_"):
             continue
             
         IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".gif", ".webp"}
 
         vol = parse_volume(vol_dir.name)
         if not vol:
-            # 非标准卷目录，仍然尝试扫描
-            print(f"  ⚠ 非标准目录（仍扫描）: {vol_dir.name}")
-            vol = {
-                "id": len(volumes) + 10,
-                "name": vol_dir.name,
-                "fullName": vol_dir.name,
-            }
+            # 非标准目录：直接跳过，不再生成 Volume 14 / 07_其他
+            print(f"  ⚠ 跳过非标准目录: {vol_dir.name}")
+            continue
 
         volumes[vol["id"]] = vol
         print(f"\n  ── {vol['fullName']} ──")
