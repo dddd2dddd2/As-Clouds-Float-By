@@ -716,6 +716,7 @@ body {
   max-width: 700px;
   max-height: 90vh;
   overflow-y: auto;
+  overflow-x: hidden !important;
   box-shadow: var(--shadow-card);
   transform: translateY(20px);
   transition: transform var(--transition);
@@ -724,6 +725,8 @@ body {
 
 .modal-body {
   padding: 40px;
+  overflow-x: hidden !important;
+  width: 100%;
 }
 
 .modal.active .modal-container {
@@ -763,15 +766,13 @@ body {
    Poem Detail (inside #poem-modal)
    ======================================== */
 .poem-header {
+  width: 100%;
   text-align: center;
-  margin-bottom: 2rem;
-  position: sticky;
-  top: 0;
-  background-color: var(--bg-modal);
-  padding: 20px 20px 20px 20px;
-  margin: -40px -40px 2rem -40px;
-  z-index: 10;
+  margin-bottom: 1.5rem;
   border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 1rem;
+  position: relative; /* 取消 sticky 负边距，防止跟随水平滑移 */
+  z-index: 10;
 }
 
 .poem-detail-title {
@@ -826,7 +827,15 @@ body {
 }
 
 .poem-content-area {
-  padding: 2rem 0;
+  width: 100%;
+  overflow-x: hidden; /* 横排模式下不滚动 */
+}
+
+.poem-content-area.vertical-mode {
+  overflow-x: auto !important; /* 竖排模式下仅正文水平滚动 */
+  overflow-y: hidden;
+  padding: 1rem 0;
+  -webkit-overflow-scrolling: touch;
 }
 
 .poem-text {
@@ -841,13 +850,28 @@ body {
 .poem-text.vertical {
   writing-mode: vertical-rl;
   text-orientation: mixed;
-  height: 450px;
-  overflow-x: auto;
+  height: 420px;       /* 固定的竖排文字高度 */
+  white-space: nowrap; /* 阻止列内不必要换行 */
+  padding: 10px 20px;
+  margin: 0;
+  display: inline-block;
   line-height: 2.5;
   letter-spacing: 0.1em;
-  margin: 0 auto;
-  padding: 20px;
   text-align: left;
+}
+
+.poem-line {
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
+.poem-clause {
+  display: inline-block; /* 将半句（如“乱云低压晚山昏，”）作为一个整体 */
+  white-space: nowrap;   /* 阻止半句内部字词断行 */
+}
+
+.poem-text.vertical .poem-line {
+  margin-bottom: 0;
 }
 
 .poem-images-section {
@@ -1328,6 +1352,10 @@ body {
     height: auto;
     text-align: center;
   }
+
+  .poem-content-area.vertical-mode {
+    overflow-x: hidden;
+  }
   
   .filter-bar {
     flex-wrap: wrap;
@@ -1367,7 +1395,34 @@ body {
   
   .modal-container {
     margin: 10px;
-    padding: 24px;
+    padding: 0;
     max-height: 95vh;
+  }
+  
+  .modal-body {
+    padding: 20px;
+  }
+  
+  #create-modal .modal-container {
+    padding: 20px;
+  }
+  
+  .poem-header {
+    padding: 20px 20px 16px 20px;
+    margin: -20px -20px 1.5rem -20px;
+  }
+  
+  .poem-text {
+    font-size: 1.15rem;
+    line-height: 2;
+    padding: 0 10px;
+  }
+
+  .poem-line {
+    margin-bottom: 0.6rem;
+  }
+
+  .poem-content-area {
+    cursor: pointer;
   }
 }

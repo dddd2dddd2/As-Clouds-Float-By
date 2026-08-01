@@ -178,6 +178,8 @@ def build_index():
             continue
         if vol_dir.name in SKIP_DIRS or vol_dir.name == PREFACE_DIR:
             continue
+            
+        IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".gif", ".webp"}
 
         vol = parse_volume(vol_dir.name)
         if not vol:
@@ -201,6 +203,12 @@ def build_index():
             seq, cipai_hint, _ = parse_filename(md.name)
             cipai, genre = detect_genre(cipai_hint)
 
+            # Scan for static images
+            static_images = []
+            for img in sorted(vol_dir.glob(f"{md.stem}*.*")):
+                if img.suffix.lower() in IMAGE_EXTS and img.name != md.name:
+                    static_images.append(f"{vol_dir.name}/{img.name}")
+
             poem_id = f"v{vol['id']}-{seq}"
             poems.append(
                 {
@@ -211,6 +219,7 @@ def build_index():
                     "volume": vol["id"],
                     "source": f"{vol_dir.name}/{md.name}",
                     "content": content,
+                    "staticImages": static_images,
                 }
             )
 

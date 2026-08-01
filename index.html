@@ -148,7 +148,10 @@
         </div>
         <div class="poem-images-section">
           <div class="poem-images-gallery" id="poem-images-gallery"></div>
-          <button class="btn-add-image" id="btn-add-image">+ 添加配图</button>
+          <div class="poem-actions" style="display: flex; gap: 12px; margin-top: 24px;">
+            <button class="btn-add-image" id="btn-add-image" style="flex: 1; margin: 0;">+ 添加配图</button>
+            <button class="btn-secondary" style="flex: 1;" onclick="document.querySelector('#poem-modal .modal-close').click()">返回</button>
+          </div>
           <input type="file" id="image-upload" accept="image/*" multiple hidden>
         </div>
       </div>

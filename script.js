@@ -105,6 +105,19 @@
     document.body.style.overflow = '';
   }
 
+  // 将诗词按标点符号切分为独立小句（分句），确保换行时不遗留单字
+  function formatPoemContent(content) {
+    if (!content) return '';
+    return content.split('\n').map(line => {
+      const trimmed = line.trim();
+      if (!trimmed) return '<br>';
+      // 匹配按逗号、句号、分号、问号、感叹号等标点分隔的半句
+      const clauses = trimmed.match(/[^，。；？！、]+[，。；？！、]?/g) || [trimmed];
+      const clausesHtml = clauses.map(c => `<span class="poem-clause">${c}</span>`).join('');
+      return `<div class="poem-line">${clausesHtml}</div>`;
+    }).join('');
+  }
+
   // ===== IndexedDB (Image & User Poems Management) =====
   function openDB() {
     return new Promise((resolve, reject) => {
@@ -440,8 +453,9 @@
           headerHtml += `<span class="user-badge">新</span>`;
         }
         
-        const hasImg = await hasImages(poem.id);
-        if (hasImg) {
+        const hasDbImg = await hasImages(poem.id);
+        const hasStaticImg = poem.staticImages && poem.staticImages.length > 0;
+        if (hasDbImg || hasStaticImg) {
           headerHtml += `<span class="card-images-indicator">🖼️</span>`;
         }
         
@@ -523,30 +537,33 @@
     if (els.poemModalRating) {
       renderStarRating(poem.id, els.poemModalRating, true);
     }
-    
+
+    // 获取独立的正文滚动区域
+    const contentArea = els.poemModal.querySelector('.poem-content-area');
+
     if (els.poemModalText) {
-      els.poemModalText.innerHTML = poem.content.replace(/\n/g, '<br>');
+      els.poemModalText.innerHTML = formatPoemContent(poem.content);
       if (state.isVertical) {
         els.poemModalText.classList.add('vertical');
+        if (contentArea) contentArea.classList.add('vertical-mode');
       } else {
         els.poemModalText.classList.remove('vertical');
+        if (contentArea) contentArea.classList.remove('vertical-mode');
       }
     }
     
     await renderPoemImages(poem.id);
     
     openModal(els.poemModal);
-    
-    if (state.isVertical && els.poemModalText) {
-      setTimeout(() => {
-        // scrollLeft is sometimes negative for RTL or vertical-rl in some browsers.
-        // We set both to cover all browser engines.
-        const maxScroll = els.poemModalText.scrollWidth;
-        els.poemModalText.scrollLeft = -maxScroll; // For browsers where right is negative
-        if (els.poemModalText.scrollLeft === 0) {
-            els.poemModalText.scrollLeft = maxScroll; // For browsers where right is positive
-        }
-      }, 50);
+
+    // 竖排模式下：初始化水平滚动条到【最右侧】（即诗词第一句的起始位置）
+    if (state.isVertical && contentArea) {
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          // scrollWidth 代表最右侧边缘，确保打开时直接看到诗词第一句
+          contentArea.scrollLeft = contentArea.scrollWidth;
+        }, 50);
+      });
     }
   }
 
@@ -554,16 +571,39 @@
     if (!els.poemImagesGallery) return;
     els.poemImagesGallery.innerHTML = '';
     
-    const images = await getImages(poemId);
-    if (images.length === 0) return;
+    const dbImages = await getImages(poemId);
+    const poem = state.allPoems.find(p => p.id === poemId);
+    const staticImages = poem?.staticImages || [];
     
-    images.forEach((img, idx) => {
+    if (dbImages.length === 0 && staticImages.length === 0) return;
+    
+    // Process static images
+    const staticImageUrls = staticImages.map(path => `./云浮集_YunFuJi/${path}`);
+    const dbImageUrls = dbImages.map(img => img.dataUrl);
+    const allUrls = [...staticImageUrls, ...dbImageUrls];
+    
+    // Render static images first
+    staticImageUrls.forEach((url, idx) => {
+      const item = document.createElement('div');
+      item.className = 'gallery-item';
+      
+      const imgEl = document.createElement('img');
+      imgEl.src = url;
+      imgEl.addEventListener('click', () => openLightbox(allUrls, idx));
+      
+      item.appendChild(imgEl);
+      els.poemImagesGallery.appendChild(item);
+    });
+    
+    // Render DB images with delete button
+    dbImages.forEach((img, idx) => {
+      const globalIdx = staticImageUrls.length + idx;
       const item = document.createElement('div');
       item.className = 'gallery-item';
       
       const imgEl = document.createElement('img');
       imgEl.src = img.dataUrl;
-      imgEl.addEventListener('click', () => openLightbox(images.map(i => i.dataUrl), idx));
+      imgEl.addEventListener('click', () => openLightbox(allUrls, globalIdx));
       
       const delBtn = document.createElement('button');
       delBtn.className = 'gallery-delete';
@@ -571,11 +611,10 @@
       delBtn.title = '删除图片';
       delBtn.addEventListener('click', async (e) => {
         e.stopPropagation();
-        if (confirm('确定要删除这张图片吗？')) {
+        if (confirm('确定要删除这张本地图片吗？')) {
           await deleteImage(img.id);
           showToast('图片已删除');
           renderPoemImages(poemId);
-          // Re-render cards to update indicator
           applyFilters(); 
         }
       });
@@ -679,8 +718,8 @@
           const target = document.querySelector(href);
           if (target) {
             target.scrollIntoView({ behavior: 'smooth' });
-            if (els.navLinks && els.navLinks.classList.contains('open')) {
-              els.navLinks.classList.remove('open');
+            if (els.nav && els.nav.classList.contains('open')) {
+              els.nav.classList.remove('open');
             }
           }
         }
@@ -691,9 +730,9 @@
   // ===== Event Listeners =====
   function initEventListeners() {
     // Mobile menu
-    if (els.mobileMenuBtn && els.navLinks) {
+    if (els.mobileMenuBtn && els.nav) {
       els.mobileMenuBtn.addEventListener('click', () => {
-        els.navLinks.classList.toggle('open');
+        els.nav.classList.toggle('open');
       });
     }
 
@@ -737,8 +776,22 @@
         localStorage.setItem('layout_vertical', state.isVertical);
         updateLayoutToggleBtn();
         if (els.poemModal && els.poemModalText) {
-          if (state.isVertical) els.poemModalText.classList.add('vertical');
-          else els.poemModalText.classList.remove('vertical');
+          const contentArea = els.poemModal.querySelector('.poem-content-area');
+          if (state.isVertical) {
+            els.poemModalText.classList.add('vertical');
+            if (contentArea) {
+              contentArea.classList.add('vertical-mode');
+              requestAnimationFrame(() => {
+                setTimeout(() => { contentArea.scrollLeft = contentArea.scrollWidth; }, 50);
+              });
+            }
+          } else {
+            els.poemModalText.classList.remove('vertical');
+            if (contentArea) {
+              contentArea.classList.remove('vertical-mode');
+              contentArea.scrollLeft = 0;
+            }
+          }
         }
       });
     }
@@ -750,6 +803,29 @@
         if (modal) closeModal(modal);
       });
     });
+
+    // 监听竖排模式下的鼠标滚轮事件：将垂直滚轮动作转化为水平滚动
+    const poemContentArea = document.querySelector('#poem-modal .poem-content-area');
+    if (poemContentArea) {
+      poemContentArea.addEventListener('wheel', (e) => {
+        if (state.isVertical || poemContentArea.classList.contains('vertical-mode')) {
+          if (e.deltaY !== 0) {
+            e.preventDefault(); // 阻止整页默认的上下垂直滚动
+            poemContentArea.scrollLeft -= e.deltaY;
+          }
+        }
+      }, { passive: false }); // 必须加上 { passive: false } 才能生效 preventDefault
+    }
+
+    // 点击详情弹窗任意区域（除配图/评分等互动按钮外）直接关闭/返回
+    if (els.poemModal) {
+      els.poemModal.addEventListener('click', (e) => {
+        const isInteractive = e.target.closest('#btn-add-image, .gallery-item, .star, #image-upload, .gallery-delete');
+        if (!isInteractive) {
+          closeModal(els.poemModal);
+        }
+      });
+    }
 
     // Escape key
     document.addEventListener('keydown', (e) => {
