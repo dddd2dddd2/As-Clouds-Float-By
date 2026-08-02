@@ -8,9 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.7.0/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Long+Cang&&display=block" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Long+Cang&display=block" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -31,7 +29,13 @@
   </nav>
 
   <section id="hero">
+    <!-- 水墨背景图及保底 -->
     <div class="hero-bg"></div>
+    <!-- 动态水墨晕染组件 -->
+    <div class="ink-blob ink-1"></div>
+    <div class="ink-blob ink-2"></div>
+    <div class="ink-blob ink-3"></div>
+
     <div class="hero-content">
       <p class="hero-en">As Clouds Float By</p>
       <h1 class="hero-title">云 浮 集</h1>
@@ -48,13 +52,16 @@
       <div class="search-group">
         <input type="text" id="search-input" placeholder="检索诗词、句子或词牌…">
       </div>
-      <!-- 切换横竖排按钮 -->
-      <button class="btn-layout" id="btn-toggle-layout" title="切换横排/竖排">
-        <span class="layout-text" id="layout-text">竖排</span>
+      <button class="btn-layout btn-random" id="btn-random-poem" title="随机一首">
+        <span class="random-text" id="random-text">随缘</span>
       </button>
-      <!-- 切换简繁体按钮 -->
-      <button class="btn-layout" id="btn-toggle-lang" title="切换简繁体">
-        <span class="lang-text" id="lang-text">繁体</span>
+      <button class="btn-layout btn-layout-dual" id="btn-toggle-layout" title="切换横排/竖排">
+        <span class="opt-layout opt-layout-vertical">竖</span>
+        <span class="opt-layout opt-layout-horizontal">横</span>
+      </button>
+      <button class="btn-layout btn-layout-dual" id="btn-toggle-lang" title="切换简繁体">
+        <span class="opt-lang opt-lang-simplified">简</span>
+        <span class="opt-lang opt-lang-traditional">繁</span>
       </button>
     </div>
   </section>
@@ -65,19 +72,15 @@
 
   <div class="modal" id="poem-modal">
     <div class="modal-overlay"></div>
+    <!-- 沉浸式背景（已增加默认水墨保底） -->
     <div class="poem-cinematic-bg" id="poem-cinematic-bg"></div>
-
-    <!-- 水墨晕染与云雾动态背景层 -->
     <div class="ink-splash-overlay">
       <div class="ink-mist-layer"></div>
       <div class="ink-drop ink-drop-1" id="ink-drop-1"></div>
       <div class="ink-drop ink-drop-2" id="ink-drop-2"></div>
     </div>
-
     <div class="modal-container">
-      <!-- 宣纸微纹理覆膜 -->
       <div class="rice-paper-texture"></div>
-
       <div class="book-pagination top-pagination">
         <button class="nav-prev-poem" id="btn-prev-poem">← 上一首</button>
         <button class="nav-toc" id="btn-toc">目 录</button>
@@ -139,7 +142,6 @@
     <img class="lightbox-image" id="lightbox-image" alt="配图大图预览">
   </div>
 
-  <!-- OpenCC 简繁转换支持库 -->
   <script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/full.js"></script>
   <script src="script.js"></script>
 </body>

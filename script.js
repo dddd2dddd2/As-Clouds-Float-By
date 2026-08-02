@@ -20,10 +20,10 @@
     poemsContainer: document.getElementById('poems-container'),
     volumeTabs: document.getElementById('volume-tabs'),
     searchInput: document.getElementById('search-input'),
+    btnRandomPoem: document.getElementById('btn-random-poem'),
+    randomText: document.getElementById('random-text'),
     btnToggleLayout: document.getElementById('btn-toggle-layout'),
-    layoutText: document.getElementById('layout-text'),
     btnToggleLang: document.getElementById('btn-toggle-lang'),
-    langText: document.getElementById('lang-text'),
     poemModal: document.getElementById('poem-modal'),
     poemCinematicBg: document.getElementById('poem-cinematic-bg'),
     btnPrevPoem: document.getElementById('btn-prev-poem'),
@@ -90,6 +90,7 @@
     if (heroQuote) heroQuote.textContent = conv('莫问春迟，且看云浮');
     if (heroSubQuote) heroSubQuote.textContent = conv('浮云也有归时节');
     if (heroCta) heroCta.textContent = conv('翻阅诗集');
+    if (els.randomText) els.randomText.textContent = conv('随缘');
     if (footerTitle) footerTitle.textContent = conv('云浮集 · As Clouds Float By');
     if (footerSub) footerSub.textContent = conv('莫问春迟，且看云浮');
 
@@ -519,13 +520,19 @@
   }
 
   function updateLayoutToggleBtn() {
-    if (els.layoutText) els.layoutText.textContent = state.isVertical ? '竖排' : '横排';
-    if (els.btnToggleLayout) els.btnToggleLayout.classList.toggle('active', state.isVertical);
+    if (!els.btnToggleLayout) return;
+    const vert = els.btnToggleLayout.querySelector('.opt-layout-vertical');
+    const horiz = els.btnToggleLayout.querySelector('.opt-layout-horizontal');
+    if (vert) vert.classList.toggle('active', !!state.isVertical);
+    if (horiz) horiz.classList.toggle('active', !state.isVertical);
   }
 
   function updateLangToggleBtn() {
-    if (els.langText) els.langText.textContent = state.isTraditional ? '繁体' : '简体';
-    if (els.btnToggleLang) els.btnToggleLang.classList.toggle('active', state.isTraditional);
+    if (!els.btnToggleLang) return;
+    const simp = els.btnToggleLang.querySelector('.opt-lang-simplified');
+    const trad = els.btnToggleLang.querySelector('.opt-lang-traditional');
+    if (simp) simp.classList.toggle('active', !state.isTraditional);
+    if (trad) trad.classList.toggle('active', !!state.isTraditional);
   }
 
   function toggleVertical() {
@@ -568,6 +575,13 @@
         state.filters.search = e.target.value.trim();
         applyFilters();
       }, 300));
+    }
+    if (els.btnRandomPoem) {
+      els.btnRandomPoem.addEventListener('click', () => {
+        if (state.allPoems.length === 0) return;
+        const randomIndex = Math.floor(Math.random() * state.allPoems.length);
+        openPoemDetail(randomIndex);
+      });
     }
     if (els.btnToggleLayout) {
       els.btnToggleLayout.addEventListener('click', toggleVertical);

@@ -120,6 +120,55 @@ def parse_md(filepath: Path) -> tuple[str | None, str | None]:
     return title, content
 
 
+def parse_md_with_yaml(filepath: Path) -> tuple[dict, str]:
+    """增强版 MD 解析器：支持解析 YAML Front Matter 标头与 Markdown 正文"""
+    text = filepath.read_text(encoding="utf-8").strip()
+    if not text:
+        return {}, ""
+
+    meta = {}
+    content = text
+
+    # 支持 --- 包裹的 YAML 元数据
+    if text.startswith("---"):
+        parts = text.split("---", 2)
+        if len(parts) >= 3:
+            yaml_block = parts[1].strip()
+            content = parts[2].strip()
+
+            # 简易多行 YAML 键值提取
+            curr_key = None
+            for line in yaml_block.split("\n"):
+                line_str = line.strip()
+                if not line_str or line_str.startswith("#"):
+                    continue
+                if ":" in line_str and not line_str.startswith("-"):
+                    k, v = line_str.split(":", 1)
+                    curr_key = k.strip()
+                    val_str = v.strip().strip('"\'')
+                    if val_str in ("|", ">"):
+                        meta[curr_key] = ""
+                    else:
+                        meta[curr_key] = val_str
+                elif curr_key and (line.startswith("  ") or line.startswith("\t")):
+                    if meta[curr_key]:
+                        meta[curr_key] += "\n" + line_str
+                    else:
+                        meta[curr_key] = line_str
+
+    # 若未在 YAML 中指定 title，则提取第一个 # 标题
+    if "title" not in meta or not meta["title"]:
+        lines = content.split("\n")
+        for i, line in enumerate(lines):
+            stripped = line.strip()
+            if stripped.startswith("#"):
+                meta["title"] = stripped.lstrip("#").strip()
+                content = "\n".join(lines[i + 1:]).strip()
+                break
+
+    return meta, content
+
+
 def parse_preface(preface_dir: Path) -> dict:
     """解析前言目录，提取简介与自序"""
     info = {"introduction": "", "preface": "", "motto": ""}
@@ -191,13 +240,14 @@ def build_index():
         print(f"\n  ── {vol['fullName']} ──")
 
         for md in sorted(vol_dir.glob("*.md")):
-            title, content = parse_md(md)
-            if not title or not content:
-                print(f"    ✗ 跳过: {md.name}")
+            meta, content = parse_md_with_yaml(md)
+            if not content:
+                print(f"    ✗ 跳过空文件: {md.name}")
                 continue
 
             seq, cipai_hint, _ = parse_filename(md.name)
-            cipai, genre = detect_genre(cipai_hint)
+            cipai, genre = detect_genre(meta.get("cipai") or cipai_hint)
+            title = meta.get("title", md.stem)
 
             # Scan for static images
             static_images = []
@@ -211,10 +261,14 @@ def build_index():
                     "id": poem_id,
                     "title": title,
                     "cipai": cipai,
-                    "genre": genre,
+                    "genre": meta.get("genre") or genre,
                     "volume": vol["id"],
                     "source": f"{vol_dir.name}/{md.name}",
                     "content": content,
+                    "epigraph": meta.get("epigraph", ""),
+                    "dateLocation": meta.get("dateLocation") or meta.get("date", ""),
+                    "translation": meta.get("translation", ""),
+                    "notes": meta.get("notes", ""),
                     "staticImages": static_images,
                 }
             )

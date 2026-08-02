@@ -235,7 +235,8 @@ body {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background-image: url("./云浮集_YunFuJi/07_其他/Front.png");
+  background-image: url("./云浮集_YunFuJi/07_其他/Front.png"),
+                    radial-gradient(circle at 50% 30%, #1a1b26 0%, #0d0d12 80%);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -254,6 +255,8 @@ body {
   position: absolute;
   border-radius: 50%;
   filter: blur(80px);
+  pointer-events: none;
+  z-index: 1;
   animation: ink-float 25s infinite alternate ease-in-out;
 }
 
@@ -407,7 +410,7 @@ body {
   padding: 16px 24px;
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: center;
   gap: 20px;
 }
 
@@ -518,6 +521,29 @@ body {
   color: var(--accent-gold);
 }
 
+/* 双状态切换按钮：竖横 / 简繁 */
+.btn-layout-dual {
+  width: auto;
+  padding: 0 14px;
+  gap: 7px;
+}
+
+.btn-layout-dual .opt-layout,
+.btn-layout-dual .opt-lang {
+  font-family: var(--font-heading);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1;
+  transition: font-size var(--transition), color var(--transition);
+}
+
+.btn-layout-dual .opt-layout.active,
+.btn-layout-dual .opt-lang.active {
+  font-size: 1.22rem;
+  font-weight: bold;
+  color: var(--accent-gold);
+}
+
 .layout-icon {
   font-family: var(--font-heading);
 }
@@ -540,9 +566,10 @@ body {
 
 .volume-tabs {
   display: flex;
+  align-items: center;
   gap: 8px;
   overflow-x: auto;
-  padding: 8px 24px;
+  padding: 0 24px;
   max-width: var(--max-width);
   margin: 0 auto;
   scrollbar-width: thin;
@@ -1243,6 +1270,10 @@ body {
   pointer-events: none;
   opacity: 0;
   transition: opacity 1.2s ease, filter 1.2s ease;
+  /* 代码自生成高质水墨烟山图案做保底 */
+  background-image: radial-gradient(ellipse at 50% 30%, rgba(201, 169, 110, 0.15), transparent 70%),
+                    radial-gradient(ellipse at 20% 80%, rgba(40, 50, 75, 0.4), transparent 60%),
+                    radial-gradient(ellipse at 80% 80%, rgba(30, 25, 40, 0.5), transparent 60%);
 }
 
 .poem-cinematic-bg.phase-full {
