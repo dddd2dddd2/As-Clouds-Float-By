@@ -86,7 +86,7 @@
     const footerSub = document.querySelector('.footer-sub');
     const navLinks = document.querySelectorAll('.nav-link');
 
-    if (heroTitle) heroTitle.textContent = conv('云 浮 集');
+    if (heroTitle) heroTitle.textContent = ('云 浮 集');
     if (heroQuote) heroQuote.textContent = conv('莫问春迟，且看云浮');
     if (heroSubQuote) heroSubQuote.textContent = conv('浮云也有归时节');
     if (heroCta) heroCta.textContent = conv('翻阅诗集');
@@ -170,11 +170,21 @@
   function formatPoemContentCinematic(content, baseDelay = 0) {
     if (!content) return '';
     let delay = baseDelay;
+    // 匹配常见的中文与英文标点符号
+    const punctRegex = /([，。；？！、：,.;?!:])/g;
+
     return content.split('\n').map(line => {
       const trimmed = line.trim();
       if (!trimmed) return '<br>';
-      const clauses = trimmed.match(/[^，。；？！、]+[，。；？！、]?/g) || [trimmed];
-      const clausesHtml = clauses.map(c => `<span class="poem-clause">${c}</span>`).join('');
+      
+      const clauses = trimmed.match(/[^，。；？！、：,.;?!:]+[，。；？！、：,.;?!:]?/g) || [trimmed];
+      
+      const clausesHtml = clauses.map(c => {
+        // 将句子中的标点符号包裹在 <span class="poem-punct"> 中
+        const formattedClause = c.replace(punctRegex, '<span class="poem-punct">$1</span>');
+        return `<span class="poem-clause">${formattedClause}</span>`;
+      }).join('');
+
       const html = `<div class="poem-line cinematic-line" style="animation-delay: ${delay.toFixed(2)}s;">${clausesHtml}</div>`;
       delay += 0.75;
       return html;
@@ -798,28 +808,46 @@
   async function init() {
     try {
       initConverter();
-
       if (isMobileScreen()) {
         state.isVertical = false;
       } else if (localStorage.getItem('layout_vertical') === null) {
         state.isVertical = true;
       }
+      
+      // === 1. 监听字体加载就绪，触发入场动画 ===
+      const startApp = () => {
+        if (!document.body.classList.contains('fonts-loaded')) {
+          document.body.classList.add('fonts-loaded');
+        }
+      };
 
+      // 兜底机制：最长等待 1.8 秒，防止极慢网络下页面白屏
+      const fontTimeout = setTimeout(startApp, 1800);
+
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => {
+          clearTimeout(fontTimeout);
+          // 稍微平滑延迟 50ms 触发
+          setTimeout(startApp, 50);
+        });
+      } else {
+        clearTimeout(fontTimeout);
+        startApp();
+      }
+
+      // === 2. 加载诗词数据 ===
       const res = await fetch('./index.json');
       if (!res.ok) throw new Error('网络请求异常');
       const data = await res.json();
       state.volumes = data.volumes || [];
       state.allPoems = data.poems || [];
-
       await openDB();
-
       updateLayoutToggleBtn();
       updateLangToggleBtn();
       updateStaticTexts();
       renderVolumeTabs();
       applyFilters();
       initEventListeners();
-
       if (els.nav) {
         els.nav.classList.toggle('scrolled', window.scrollY > 60);
       }

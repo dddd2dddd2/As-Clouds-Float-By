@@ -5,8 +5,8 @@
     "motto": "莫问春迟，且看云浮；浮云也有归时节。",
     "introduction": "《云浮集》简介与英文名\n- **中文书名**：云浮集\n- **英文书名**：Drifting Clouds / Watch the Clouds Drift\n- **核心诗意**：“莫问春迟，且看云浮；浮云也有归时节。”",
     "preface": "《云浮集》自序\n在此写入您的自序与前言...",
-    "totalPoems": 19,
-    "lastUpdated": "2026-08-02T20:04:24.334974"
+    "totalPoems": 20,
+    "lastUpdated": "2026-08-03T08:52:42.896476"
   },
   "volumes": [
     {
@@ -43,6 +43,7 @@
     "乐府",
     "五古",
     "卜算子",
+    "浣溪沙",
     "蝶恋花",
     "行香子"
   ],
@@ -315,6 +316,20 @@
       "volume": 4,
       "source": "04_卷四_人间烟火/03_七律_寒村秋暮.md",
       "content": "乱云低压晚山昏，荻花送雨入寒村。\n溪桥落叶迷归径，古渡疏烟锁暮痕。\n老叟临扉思稻熟，秋深未敢问年存。\n一声归雁横天外，孤灯犹照旧柴门。",
+      "epigraph": "",
+      "dateLocation": "",
+      "translation": "",
+      "notes": "",
+      "staticImages": []
+    },
+    {
+      "id": "v4-04",
+      "title": "浣溪沙·酒罢试茶",
+      "cipai": "浣溪沙",
+      "genre": "诗",
+      "volume": 4,
+      "source": "04_卷四_人间烟火/04_浣溪沙_酒罢试茶.md",
+      "content": "小雨新停杯影斜，\n碧瓯微暖试团茶。\n闲看雏燕入谁家。\n\n偶向人前称未老，\n醉来偏惜鬓边花。\n一回风起一回遮。",
       "epigraph": "",
       "dateLocation": "",
       "translation": "",

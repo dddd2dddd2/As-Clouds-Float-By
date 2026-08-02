@@ -121,6 +121,15 @@ body {
   }
 }
 
+/* 未完成字体加载前，隐藏顶部导航与卷首文字，防止字体闪烁 */
+body:not(.fonts-loaded) #main-nav,
+body:not(.fonts-loaded) .hero-content,
+body:not(.fonts-loaded) .hero-bg,
+body:not(.fonts-loaded) .ink-blob {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 /* ========================================
    Navigation (#main-nav)
    ======================================== */
@@ -132,7 +141,12 @@ body {
   height: var(--nav-height);
   z-index: 1000;
   background: transparent;
-  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  opacity: 0;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, opacity 0.8s ease;
+}
+
+body.fonts-loaded #main-nav {
+  opacity: 1;
 }
 
 #main-nav.scrolled {
@@ -233,6 +247,7 @@ body {
   justify-content: center;
 }
 
+/* Hero 背景图放大及缩放入场动画 */
 .hero-bg {
   position: absolute;
   inset: 0;
@@ -242,7 +257,31 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 0.6; /* Slight fade to ensure text readability */
+  opacity: 0;
+  transform: scale(1.28);
+  filter: blur(8px) brightness(1.2);
+}
+
+/* 当字体载入完成后，触发：缩放的同时由亮变暗 */
+body.fonts-loaded .hero-bg {
+  animation: hero-bg-cinematic 6.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 核心动画：初始高亮、全透明度 -> 在平滑缩放的同时，明度与透明度同步压暗 */
+@keyframes hero-bg-cinematic {
+  0% {
+    opacity: 1;                             /* 初始：100% 明亮原图 */
+    transform: scale(1.28);                 /* 初始：放大 1.28 倍 */
+    filter: blur(6px) brightness(1.2);      /* 初始：带有高光镜头感 */
+  }
+  20% {
+    filter: blur(0) brightness(1.1);        /* 快速去模糊，保持画面清晰 */
+  }
+  100% {
+    opacity: 0.6;                           /* 终点：同步压暗至 60% 透明度 */
+    transform: scale(1);                    /* 终点：缩放平稳落位至原大 */
+    filter: blur(0) brightness(0.85);       /* 终点：沉淀为暗色背景，完美烘托金色文字 */
+  }
 }
 
 /* Add a gradient overlay to blend it with the dark theme */
@@ -301,6 +340,7 @@ body {
   padding: 0 20px;
 }
 
+/* 卷首英文字 */
 .hero-en {
   font-family: var(--font-en);
   font-variant: small-caps;
@@ -309,44 +349,66 @@ body {
   font-size: 0.9rem;
   margin-bottom: 1rem;
   opacity: 0;
-  animation: fade-in-up 1s forwards 0.3s;
 }
 
+body.fonts-loaded .hero-en {
+  animation: fade-in-up 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.8s;
+}
+
+/* 毛笔大标题：云 浮 集 */
 .hero-title {
   font-family: 'Long Cang', cursive, serif;
   color: var(--accent-gold);
-  /* 调小移动端最小字号，防止强制单行后在小屏幕溢出 */
   font-size: clamp(4.5rem, 13vw, 11.5rem);
   letter-spacing: 0.5em;
   text-shadow: var(--shadow-glow);
   margin-bottom: 2rem;
   padding-left: 0.5em;
-  
-  /* 开启 GPU 渲染抗锯齿，防止动画结束时字体变细或跳动 */
   backface-visibility: hidden;
   transform: translateZ(0);
-
-  animation: hero-title-in 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-  /* 关键修复：强制不换行，杜绝标题变成两行闪烁 */
+  opacity: 0;
   white-space: nowrap;
 }
 
+body.fonts-loaded .hero-title {
+  animation: hero-title-in 1.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 1.0s;
+}
+
+/* 分隔线扩展 */
 .hero-divider {
-  width: 60px;
+  width: 0px;
   height: 1px;
   background-color: var(--accent-gold);
   margin: 0 auto 2rem;
   opacity: 0;
-  animation: fade-in-up 1s forwards 0.8s;
 }
 
+body.fonts-loaded .hero-divider {
+  animation: hero-divider-expand 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 1.5s;
+}
+
+@keyframes hero-divider-expand {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  100% {
+    width: 60px;
+    opacity: 1;
+  }
+}
+
+/* 核心诗意金句 */
 .hero-quote {
   font-family: var(--font-body);
   font-size: 1.5rem;
   color: var(--text-primary);
   margin-top: 1rem;
   opacity: 0;
-  animation: fade-in-up 1s forwards 1s;
+}
+
+body.fonts-loaded .hero-quote {
+  animation: fade-in-up 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 1.7s;
 }
 
 .hero-sub-quote {
@@ -355,9 +417,13 @@ body {
   color: var(--text-secondary);
   margin-top: 0.5rem;
   opacity: 0;
-  animation: fade-in-up 1s forwards 1.2s;
 }
 
+body.fonts-loaded .hero-sub-quote {
+  animation: fade-in-up 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 1.9s;
+}
+
+/* 翻阅诗集按钮 */
 .hero-cta {
   display: inline-flex;
   align-items: center;
@@ -370,7 +436,10 @@ body {
   text-decoration: none;
   transition: var(--transition);
   opacity: 0;
-  animation: fade-in-up 1s forwards 1.4s;
+}
+
+body.fonts-loaded .hero-cta {
+  animation: fade-in-up 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 2.1s;
 }
 
 .hero-cta:hover {
@@ -1031,6 +1100,11 @@ body {
     min-width: max-content !important;
     flex-shrink: 0 !important;
   }
+
+  /* === 竖排古典模式：隐藏所有标点符号 === */
+  .poem-text.vertical .poem-punct {
+    display: none !important;
+  }
 }
 
 /* ==================== 4. 移动端归一化：紧凑横排 ==================== */
@@ -1661,13 +1735,19 @@ body {
 
 /* 1. 宣纸微纹理 */
 .rice-paper-texture {
-  position: absolute;
-  inset: 0;
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  margin-bottom: -100vh; /* 不占用下方正文排版空间 */
   pointer-events: none;
   z-index: 1;
-  opacity: 0.16; /* 宣纸纹理清晰度，微弱自然 */
+  opacity: 0.22; /* 稍微提升透明度，强化桌面端纸张质感 */
   mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paperNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paperNoise)'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paperNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paperNoise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 160px 160px; /* 统一桌面端与移动端的噪点缩放比例 */
 }
 
 /* 确保阅读器内容和翻页按钮位于宣纸纹理上方 */
