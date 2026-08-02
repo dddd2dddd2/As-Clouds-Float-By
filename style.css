@@ -27,7 +27,7 @@
   --radius: 12px;
   --radius-lg: 16px;
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --font-heading: 'Long Cang', cursive, serif;
+  --font-heading: 'Noto Serif SC', 'STSong', serif;
   --font-body: 'Noto Serif SC', 'STSong', serif;
   --font-en: 'Georgia', serif;
 }
@@ -177,6 +177,47 @@ body {
   color: var(--accent-gold);
 }
 
+/* 移动端汉堡菜单按钮（默认隐藏） */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  cursor: pointer;
+  align-items: center;
+}
+
+.nav-toggle-bar {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--text-secondary);
+  border-radius: 2px;
+  transition: var(--transition);
+}
+
+.nav-toggle:hover .nav-toggle-bar {
+  background: var(--accent-gold);
+}
+
+.nav-toggle.open .nav-toggle-bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.nav-toggle.open .nav-toggle-bar:nth-child(2) {
+  opacity: 0;
+}
+
+.nav-toggle.open .nav-toggle-bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
 /* ========================================
    Hero Section (#hero)
    ======================================== */
@@ -267,7 +308,7 @@ body {
 }
 
 .hero-title {
-  font-family: var(--font-heading);
+  font-family: 'Long Cang', cursive, serif;
   color: var(--accent-gold);
   font-size: clamp(6rem, 13vw, 11.5rem);
   letter-spacing: 0.5em;
@@ -1484,6 +1525,34 @@ body {
     display: none;
   }
 
+  .nav-links.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: var(--nav-height);
+    right: 12px;
+    gap: 4px;
+    padding: 12px;
+    background: rgba(13, 13, 18, 0.97);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    box-shadow: var(--shadow-card);
+  }
+
+  .nav-links.open .nav-link {
+    padding: 10px 18px;
+    border-radius: 8px;
+    white-space: nowrap;
+  }
+
+  .nav-links.open .nav-link:hover {
+    background: var(--accent-gold-dim);
+  }
+
+  .nav-toggle {
+    display: flex;
+  }
+
   .hero-title {
     font-size: clamp(2.5rem, 10vw, 4rem);
   }
@@ -1548,4 +1617,92 @@ body {
   .poem-content-area {
     cursor: pointer;
   }
+}
+
+/* =========================================================
+   宣纸质感与水墨云雾动态效果
+   ========================================================= */
+
+/* 1. 宣纸微纹理 */
+.rice-paper-texture {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.16; /* 宣纸纹理清晰度，微弱自然 */
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paperNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paperNoise)'/%3E%3C/svg%3E");
+}
+
+/* 确保阅读器内容和翻页按钮位于宣纸纹理上方 */
+.modal-container {
+  position: relative;
+  background: radial-gradient(circle at 50% 30%, rgba(26, 25, 36, 0.96), rgba(14, 14, 20, 0.98)) !important;
+}
+
+.modal-body, .book-pagination {
+  position: relative;
+  z-index: 2;
+}
+
+/* 2. 水墨晕染容器 */
+.ink-splash-overlay {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 墨滴扩散动画 */
+.ink-drop {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  margin-left: -100px;
+  margin-top: -100px;
+  border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+  background: radial-gradient(circle, rgba(201, 169, 110, 0.3) 0%, rgba(35, 30, 45, 0.7) 45%, transparent 75%);
+  filter: blur(30px);
+  opacity: 0;
+  transform: scale(0.2) rotate(0deg);
+}
+
+/* 触发墨滴扩散的关键帧动画 */
+.ink-drop-1.animate {
+  animation: inkSplashMain 2.6s cubic-bezier(0.1, 0.8, 0.25, 1) forwards;
+}
+
+.ink-drop-2.animate {
+  animation: inkSplashSub 3.4s cubic-bezier(0.1, 0.7, 0.2, 1) 0.2s forwards;
+}
+
+@keyframes inkSplashMain {
+  0% { opacity: 0.85; transform: scale(0.2) rotate(0deg); }
+  50% { opacity: 0.5; transform: scale(3.5) rotate(50deg); }
+  100% { opacity: 0.12; transform: scale(5.5) rotate(110deg); }
+}
+
+@keyframes inkSplashSub {
+  0% { opacity: 0; transform: scale(0.1) rotate(180deg); }
+  40% { opacity: 0.6; transform: scale(2.8) rotate(220deg); }
+  100% { opacity: 0.08; transform: scale(4.8) rotate(300deg); }
+}
+
+/* 3. 背景极缓云雾飘动 */
+.ink-mist-layer {
+  position: absolute;
+  inset: -30%;
+  background: radial-gradient(ellipse at 35% 35%, rgba(201, 169, 110, 0.07), transparent 60%),
+              radial-gradient(ellipse at 65% 65%, rgba(60, 50, 75, 0.12), transparent 65%);
+  filter: blur(45px);
+  animation: mistFloat 20s ease-in-out infinite alternate;
+}
+
+@keyframes mistFloat {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-3%, 2%) scale(1.06); }
+  100% { transform: translate(3%, -2%) scale(0.96); }
 }

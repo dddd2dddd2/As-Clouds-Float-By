@@ -1,6 +1,4 @@
-// script.js — 典藏书卷阅读引擎
 (function() {
-  // ===== State =====
   const state = {
     allPoems: [],
     volumes: [],
@@ -8,21 +6,24 @@
     filters: { volume: 'all', search: '' },
     isVertical: (localStorage.getItem('layout_vertical') === 'true') ||
                 (localStorage.getItem('layout_vertical') === null && window.innerWidth >= 768),
-    isCinematic: localStorage.getItem('mode_cinematic') !== 'false',
+    isCinematic: true, // 默认开启高级沉浸演播模式
+    isTraditional: localStorage.getItem('lang_traditional') === 'true', // 简繁体状态
     cinematicTimers: [],
     db: null,
     lightbox: { images: [], currentIndex: 0 }
   };
 
-  // ===== DOM Elements =====
   const els = {
     nav: document.getElementById('main-nav'),
+    navToggle: document.getElementById('nav-toggle'),
+    navLinks: document.querySelector('.nav-links'),
     poemsContainer: document.getElementById('poems-container'),
     volumeTabs: document.getElementById('volume-tabs'),
     searchInput: document.getElementById('search-input'),
     btnToggleLayout: document.getElementById('btn-toggle-layout'),
-    layoutIcon: document.querySelector('#btn-toggle-layout .layout-icon'),
-    btnToggleCinematic: document.getElementById('btn-toggle-cinematic'),
+    layoutText: document.getElementById('layout-text'),
+    btnToggleLang: document.getElementById('btn-toggle-lang'),
+    langText: document.getElementById('lang-text'),
     poemModal: document.getElementById('poem-modal'),
     poemCinematicBg: document.getElementById('poem-cinematic-bg'),
     btnPrevPoem: document.getElementById('btn-prev-poem'),
@@ -46,7 +47,59 @@
     lightboxImage: document.getElementById('lightbox-image')
   };
 
-  // ===== Utilities =====
+  let s2tConverter = null;
+
+  function initConverter() {
+    if (window.OpenCC && typeof window.OpenCC.Converter === 'function') {
+      try {
+        s2tConverter = window.OpenCC.Converter({ from: 'cn', to: 'hk' });
+      } catch (e) {
+        console.warn('OpenCC 加载异常:', e);
+      }
+    }
+  }
+
+  function conv(str) {
+    if (!str) return str;
+    if (!state.isTraditional) return str;
+    if (s2tConverter) return s2tConverter(str);
+    return fallbackS2T(str);
+  }
+
+  function fallbackS2T(str) {
+    const s = "云迟归节问怀隐尽浅别话梦楼离观潮寒阳风独语诉乱伤临绝卷凤忆惊柳絮罗阴玉箏风敲孤漫残冷秋舟枕衾凄余温踏冰流客从遗尺素裾归望高蔽临浦朝斜日叫换笑觉后残寒";
+    const t = "雲遲歸節問懷隱盡淺別話夢樓離觀潮寒陽風獨語訴亂傷臨絕卷鳳憶驚柳絮羅陰玉箏風敲孤漫殘冷秋舟枕衾悽餘溫踏冰流客從遺尺素裾歸望高蔽臨浦朝斜日叫換笑覺後殘寒";
+    let res = "";
+    for (let char of str) {
+      let idx = s.indexOf(char);
+      res += (idx !== -1) ? t[idx] : char;
+    }
+    return res;
+  }
+
+  function updateStaticTexts() {
+    const heroTitle = document.querySelector('.hero-title');
+    const heroQuote = document.querySelector('.hero-quote');
+    const heroSubQuote = document.querySelector('.hero-sub-quote');
+    const heroCta = document.querySelector('.hero-cta');
+    const footerTitle = document.querySelector('.footer-title');
+    const footerSub = document.querySelector('.footer-sub');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    if (heroTitle) heroTitle.textContent = conv('云 浮 集');
+    if (heroQuote) heroQuote.textContent = conv('莫问春迟，且看云浮');
+    if (heroSubQuote) heroSubQuote.textContent = conv('浮云也有归时节');
+    if (heroCta) heroCta.textContent = conv('翻阅诗集');
+    if (footerTitle) footerTitle.textContent = conv('云浮集 · As Clouds Float By');
+    if (footerSub) footerSub.textContent = conv('莫问春迟，且看云浮');
+
+    if (navLinks.length >= 3) {
+      navLinks[0].textContent = conv('卷首');
+      navLinks[1].textContent = conv('目录');
+      navLinks[2].textContent = conv('关于');
+    }
+  }
+
   function debounce(fn, wait) {
     let t;
     return (...args) => {
@@ -55,12 +108,10 @@
     };
   }
 
-  // 判断是否为移动端屏幕
   function isMobileScreen() {
     return window.innerWidth <= 768;
   }
 
-  // 竖排模式下：将水平滚动位置对齐到最右侧（诗词第一句的起始位置）。
   function scrollVerticalToStart() {
     if (!els.poemContentArea) return;
     requestAnimationFrame(() => {
@@ -100,7 +151,6 @@
     document.body.style.overflow = '';
   }
 
-  // 将诗词按标点切分为独立小句（分句），确保换行时不遗留单字
   function formatPoemContent(content) {
     if (!content) return '';
     return content.split('\n').map(line => {
@@ -111,13 +161,11 @@
     }).join('');
   }
 
-  // ===== 高级沉浸演播模式 (Cinematic Mode) =====
   function clearCinematicTimers() {
     state.cinematicTimers.forEach(t => clearTimeout(t));
     state.cinematicTimers = [];
   }
 
-  // 演播正文排版：逐句添加动画延迟（每行依次浮现 0.75s）
   function formatPoemContentCinematic(content, baseDelay = 0) {
     if (!content) return '';
     let delay = baseDelay;
@@ -132,18 +180,24 @@
     }).join('');
   }
 
-  // 点击跳过动画：立即呈现全部内容
   function skipCinematicAnimation() {
     clearCinematicTimers();
     if (els.poemModal) els.poemModal.classList.add('skip-animation');
     if (els.poemCinematicBg) els.poemCinematicBg.className = 'poem-cinematic-bg phase-dim';
   }
 
-  function updateCinematicToggleBtn() {
-    if (els.btnToggleCinematic) els.btnToggleCinematic.classList.toggle('active', state.isCinematic);
+  function triggerInkSplash() {
+    const d1 = document.getElementById('ink-drop-1');
+    const d2 = document.getElementById('ink-drop-2');
+    if (d1 && d2) {
+      d1.classList.remove('animate');
+      d2.classList.remove('animate');
+      void d1.offsetWidth; // 强行触发 DOM 重绘
+      d1.classList.add('animate');
+      d2.classList.add('animate');
+    }
   }
 
-  // 轻提示（演播模式切换反馈）
   function showToast(message, duration = 2500) {
     let container = document.getElementById('toast-container');
     if (!container) {
@@ -163,7 +217,6 @@
     }, duration);
   }
 
-  // ===== IndexedDB（本地图片持久化存储） =====
   function openDB() {
     return new Promise((resolve, reject) => {
       if (state.db) return resolve(state.db);
@@ -214,7 +267,6 @@
     });
   }
 
-  // 图片自动压缩后转 dataURL
   function compressImage(file, maxWidth = 1200, quality = 0.8) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -237,19 +289,14 @@
     });
   }
 
-  // ===== 渲染诗词配图画廊 =====
   async function renderPoemImages(poemId) {
     if (!els.poemImagesGallery) return [];
     els.poemImagesGallery.innerHTML = '';
-
     const poem = state.allPoems.find(p => p.id === poemId);
     const staticImages = (poem?.staticImages || []).map(path => `./云浮集_YunFuJi/${path}`);
     const dbImages = await getImages(poemId);
     const allUrls = [...staticImages, ...dbImages.map(img => img.dataUrl)];
-
     if (allUrls.length === 0) return [];
-
-    // 渲染静态图片
     staticImages.forEach((url, idx) => {
       const item = document.createElement('div');
       item.className = 'gallery-item';
@@ -260,8 +307,6 @@
       item.appendChild(imgEl);
       els.poemImagesGallery.appendChild(item);
     });
-
-    // 渲染本地上传图片（可删除）
     dbImages.forEach((img, idx) => {
       const globalIdx = staticImages.length + idx;
       const item = document.createElement('div');
@@ -270,7 +315,6 @@
       imgEl.src = img.dataUrl;
       imgEl.alt = '配图';
       imgEl.addEventListener('click', () => openLightbox(allUrls, globalIdx));
-
       const delBtn = document.createElement('button');
       delBtn.className = 'gallery-delete';
       delBtn.textContent = '×';
@@ -282,12 +326,10 @@
           renderPoemImages(poemId);
         }
       });
-
       item.appendChild(imgEl);
       item.appendChild(delBtn);
       els.poemImagesGallery.appendChild(item);
     });
-
     const imageElements = Array.from(els.poemImagesGallery.querySelectorAll('img'));
     await Promise.all(imageElements.map(img => {
       if (img.complete) return Promise.resolve();
@@ -296,11 +338,9 @@
         img.addEventListener('error', resolve, { once: true });
       });
     }));
-
     return allUrls;
   }
 
-  // ===== 大图预览灯箱 (Lightbox) =====
   function openLightbox(images, index) {
     if (!els.lightbox || images.length === 0) return;
     state.lightbox.images = images;
@@ -319,15 +359,14 @@
     }
   }
 
-  // ===== 目录渲染 =====
   function renderVolumeTabs() {
     if (!els.volumeTabs) return;
-    els.volumeTabs.innerHTML = '<button class="volume-tab active" data-vol="all">全部卷次</button>';
+    els.volumeTabs.innerHTML = `<button class="volume-tab active" data-vol="all">${conv('全部卷次')}</button>`;
     state.volumes.forEach(v => {
       const btn = document.createElement('button');
       btn.className = 'volume-tab';
       btn.dataset.vol = v.id;
-      btn.textContent = v.fullName;
+      btn.textContent = conv(v.fullName);
       els.volumeTabs.appendChild(btn);
     });
   }
@@ -335,46 +374,38 @@
   function renderCollection(poems) {
     if (!els.poemsContainer) return;
     els.poemsContainer.innerHTML = '';
-
     if (poems.length === 0) {
-      els.poemsContainer.innerHTML = '<p class="empty-state">未找到匹配的诗词</p>';
+      els.poemsContainer.innerHTML = `<p class="empty-state">${conv('未找到匹配的诗词')}</p>`;
       return;
     }
-
     const grouped = {};
     poems.forEach(p => {
       if (!grouped[p.volume]) grouped[p.volume] = [];
       grouped[p.volume].push(p);
     });
-
     state.volumes.forEach(vol => {
       const poemsInVol = grouped[vol.id];
       if (!poemsInVol || poemsInVol.length === 0) return;
-
       const volSection = document.createElement('section');
       volSection.className = 'volume-section';
-
-      // 卷序：像实体书一样，先呈现卷首语
       if (vol.preface) {
         const prefDiv = document.createElement('div');
         prefDiv.className = 'volume-preface-card';
         prefDiv.innerHTML = `
-          <h3 class="volume-preface-title">${vol.fullName} · 卷序</h3>
-          <p class="volume-preface-text">${vol.preface.replace(/\n/g, '<br>')}</p>
+          <h3 class="volume-preface-title">${conv(vol.fullName)} · ${conv('卷序')}</h3>
+          <p class="volume-preface-text">${conv(vol.preface).replace(/\n/g, '<br>')}</p>
         `;
         volSection.appendChild(prefDiv);
       }
-
-      // 作品网格
       const grid = document.createElement('div');
       grid.className = 'poems-grid';
       poemsInVol.forEach(poem => {
         const card = document.createElement('div');
         card.className = 'poem-card';
         card.innerHTML = `
-          <span class="card-badge">${poem.cipai || poem.genre}</span>
-          <h3 class="card-title">${poem.title}</h3>
-          <p class="card-preview">${poem.content.split('\n').slice(0, 2).join('<br>')}</p>
+          <span class="card-badge">${conv(poem.cipai || poem.genre)}</span>
+          <h3 class="card-title">${conv(poem.title)}</h3>
+          <p class="card-preview">${conv(poem.content.split('\n').slice(0, 2).join('\n')).replace(/\n/g, '<br>')}</p>
         `;
         card.addEventListener('click', () => {
           const globalIdx = state.allPoems.findIndex(p => p.id === poem.id);
@@ -382,7 +413,6 @@
         });
         grid.appendChild(card);
       });
-
       volSection.appendChild(grid);
       els.poemsContainer.appendChild(volSection);
     });
@@ -404,35 +434,26 @@
     renderCollection(filtered);
   }
 
-  // ===== 阅读器 =====
-  // 打开特定位置的诗词（支持连续翻页）
   async function openPoemDetail(index) {
     if (index < 0 || index >= state.allPoems.length) return;
     clearCinematicTimers();
+    triggerInkSplash(); // 每次打开诗词触发一抹水墨扩散
     state.currentPoemIndex = index;
     const poem = state.allPoems[index];
-
     const modalContainer = els.poemModal.querySelector('.modal-container');
     if (modalContainer) {
       modalContainer.scrollTop = 0;
     }
-
-    // 更新翻页按钮状态
     if (els.btnPrevPoem) els.btnPrevPoem.disabled = (index === 0);
     if (els.btnNextPoem) els.btnNextPoem.disabled = (index === state.allPoems.length - 1);
 
-    // 填充元数据
-    if (els.poemDetailTitle) els.poemDetailTitle.textContent = poem.title;
-    if (els.poemGenreBadge) els.poemGenreBadge.textContent = poem.cipai || poem.genre;
-
+    if (els.poemDetailTitle) els.poemDetailTitle.textContent = conv(poem.title);
+    if (els.poemGenreBadge) els.poemGenreBadge.textContent = conv(poem.cipai || poem.genre);
     const vol = state.volumes.find(v => String(v.id) === String(poem.volume));
-    if (els.poemVolumeBadge) els.poemVolumeBadge.textContent = vol ? vol.fullName : '';
+    if (els.poemVolumeBadge) els.poemVolumeBadge.textContent = vol ? conv(vol.fullName) : '';
+    if (els.poemEpigraph) els.poemEpigraph.textContent = poem.epigraph ? `“${conv(poem.epigraph)}”` : '';
+    if (els.poemDateLocation) els.poemDateLocation.textContent = conv(poem.dateLocation || '');
 
-    // 题记与时间地点
-    if (els.poemEpigraph) els.poemEpigraph.textContent = poem.epigraph ? `“${poem.epigraph}”` : '';
-    if (els.poemDateLocation) els.poemDateLocation.textContent = poem.dateLocation || '';
-
-    // 双语文学翻译
     if (els.poemTranslationBlock && els.poemTranslationText) {
       if (poem.translation) {
         els.poemTranslationText.textContent = poem.translation;
@@ -441,70 +462,45 @@
         els.poemTranslationBlock.style.display = 'none';
       }
     }
-
-    // 作者按 / 后记（默认折叠）
     if (els.authorNotesDetails && els.authorNotesContent) {
       if (poem.notes) {
-        els.authorNotesContent.textContent = poem.notes;
+        els.authorNotesContent.textContent = conv(poem.notes);
         els.authorNotesDetails.style.display = 'block';
         els.authorNotesDetails.open = false;
       } else {
         els.authorNotesDetails.style.display = 'none';
       }
     }
-
-    // 渲染配图（静态 + 本地上传），返回全部图片 URL（演播背景取第一张）
     const allUrls = await renderPoemImages(poem.id);
-
-    // ===== 高级沉浸演播模式 =====
     const headerEl = els.poemModal ? els.poemModal.querySelector('.poem-header') : null;
     let baseLineDelay = 0;
 
-    if (state.isCinematic) {
-      els.poemModal.classList.add('cinematic-mode');
-      els.poemModal.classList.remove('skip-animation');
-
-      // 取第一张配图作为沉浸背景：全屏 1200ms 后转暗模糊退为背景
-      const firstImageUrl = allUrls[0] || null;
-      if (firstImageUrl && els.poemCinematicBg) {
-        els.poemCinematicBg.style.backgroundImage = `url("${firstImageUrl}")`;
-        els.poemCinematicBg.className = 'poem-cinematic-bg phase-full';
-        state.cinematicTimers.push(setTimeout(() => {
-          els.poemCinematicBg.className = 'poem-cinematic-bg phase-dim';
-        }, 1200));
-        baseLineDelay = 1.8;
-      } else if (els.poemCinematicBg) {
-        els.poemCinematicBg.style.backgroundImage = 'none';
-        els.poemCinematicBg.className = 'poem-cinematic-bg';
-        baseLineDelay = 0.4;
-      }
-
-      // 头部淡入动画（强制重排以重新触发）
-      if (headerEl) {
-        headerEl.classList.remove('cinematic-header');
-        void headerEl.offsetWidth;
-        headerEl.classList.add('cinematic-header');
-        headerEl.style.animationDelay = `${Math.max(0, baseLineDelay - 0.3).toFixed(2)}s`;
-      }
-    } else {
-      els.poemModal.classList.remove('cinematic-mode');
-      els.poemModal.classList.remove('skip-animation');
-      if (els.poemCinematicBg) {
-        els.poemCinematicBg.style.backgroundImage = 'none';
-        els.poemCinematicBg.className = 'poem-cinematic-bg';
-      }
-      if (headerEl) {
-        headerEl.classList.remove('cinematic-header');
-        headerEl.style.animationDelay = '';
-      }
+    // 沉浸演播模式（默认常开）
+    els.poemModal.classList.add('cinematic-mode');
+    els.poemModal.classList.remove('skip-animation');
+    const firstImageUrl = allUrls[0] || null;
+    if (firstImageUrl && els.poemCinematicBg) {
+      els.poemCinematicBg.style.backgroundImage = `url("${firstImageUrl}")`;
+      els.poemCinematicBg.className = 'poem-cinematic-bg phase-full';
+      state.cinematicTimers.push(setTimeout(() => {
+        els.poemCinematicBg.className = 'poem-cinematic-bg phase-dim';
+      }, 1200));
+      baseLineDelay = 1.8;
+    } else if (els.poemCinematicBg) {
+      els.poemCinematicBg.style.backgroundImage = 'none';
+      els.poemCinematicBg.className = 'poem-cinematic-bg';
+      baseLineDelay = 0.4;
+    }
+    if (headerEl) {
+      headerEl.classList.remove('cinematic-header');
+      void headerEl.offsetWidth;
+      headerEl.classList.add('cinematic-header');
+      headerEl.style.animationDelay = `${Math.max(0, baseLineDelay - 0.3).toFixed(2)}s`;
     }
 
-    // 正文排版（演播模式逐句浮现 / 普通模式直接显示）
     if (els.poemText) {
-      els.poemText.innerHTML = state.isCinematic
-        ? formatPoemContentCinematic(poem.content, baseLineDelay)
-        : formatPoemContent(poem.content);
-
+      const formattedContent = conv(poem.content);
+      els.poemText.innerHTML = formatPoemContentCinematic(formattedContent, baseLineDelay);
       if (state.isVertical) {
         els.poemText.classList.add('vertical');
         if (els.poemContentArea) els.poemContentArea.classList.add('vertical-mode');
@@ -513,42 +509,35 @@
         if (els.poemContentArea) els.poemContentArea.classList.remove('vertical-mode');
       }
     }
-
-    // 激活弹窗
     openReader();
-
-    // 所有内容（含异步配图）就绪后，再精确重置双滚动条位置
     resetReaderScrollPositions();
-
-    // 演播动画全部结束后自动标记完成，此后点击直接关闭
-    if (state.isCinematic) {
-      const lineCount = poem.content.split('\n').filter(l => l.trim()).length;
-      const totalDelay = baseLineDelay + Math.max(0, lineCount - 1) * 0.75 + 1.1;
-      state.cinematicTimers.push(setTimeout(() => {
-        if (els.poemModal) els.poemModal.classList.add('skip-animation');
-      }, totalDelay * 1000));
-    }
+    const lineCount = poem.content.split('\n').filter(l => l.trim()).length;
+    const totalDelay = baseLineDelay + Math.max(0, lineCount - 1) * 0.75 + 1.1;
+    state.cinematicTimers.push(setTimeout(() => {
+      if (els.poemModal) els.poemModal.classList.add('skip-animation');
+    }, totalDelay * 1000));
   }
 
-  // ===== 布局切换 =====
   function updateLayoutToggleBtn() {
-    if (els.layoutIcon) els.layoutIcon.textContent = state.isVertical ? '竖' : '横';
+    if (els.layoutText) els.layoutText.textContent = state.isVertical ? '竖排' : '横排';
+    if (els.btnToggleLayout) els.btnToggleLayout.classList.toggle('active', state.isVertical);
+  }
+
+  function updateLangToggleBtn() {
+    if (els.langText) els.langText.textContent = state.isTraditional ? '繁体' : '简体';
+    if (els.btnToggleLang) els.btnToggleLang.classList.toggle('active', state.isTraditional);
   }
 
   function toggleVertical() {
-    // 移动端强制横排，禁止切换竖排
     if (isMobileScreen()) {
       state.isVertical = false;
       updateLayoutToggleBtn();
       return;
     }
-
     state.isVertical = !state.isVertical;
     localStorage.setItem('layout_vertical', state.isVertical);
     updateLayoutToggleBtn();
-
     if (!els.poemModal.classList.contains('active') || !els.poemText) return;
-
     if (state.isVertical) {
       els.poemText.classList.add('vertical');
       if (els.poemContentArea) {
@@ -564,9 +553,7 @@
     }
   }
 
-  // ===== 事件监听 =====
   function initEventListeners() {
-    // 卷次筛选
     if (els.volumeTabs) {
       els.volumeTabs.addEventListener('click', (e) => {
         if (!e.target.classList.contains('volume-tab')) return;
@@ -576,35 +563,29 @@
         applyFilters();
       });
     }
-
-    // 检索
     if (els.searchInput) {
       els.searchInput.addEventListener('input', debounce((e) => {
         state.filters.search = e.target.value.trim();
         applyFilters();
       }, 300));
     }
-
-    // 横排 / 竖排切换
     if (els.btnToggleLayout) {
       els.btnToggleLayout.addEventListener('click', toggleVertical);
     }
-
-    // 高级沉浸演播模式开关
-    if (els.btnToggleCinematic) {
-      els.btnToggleCinematic.addEventListener('click', () => {
-        state.isCinematic = !state.isCinematic;
-        localStorage.setItem('mode_cinematic', state.isCinematic);
-        updateCinematicToggleBtn();
-        showToast(state.isCinematic ? '已开启高级演播模式' : '已关闭高级演播模式');
-        // 弹窗打开时立即以新模式重新排版
+    if (els.btnToggleLang) {
+      els.btnToggleLang.addEventListener('click', () => {
+        state.isTraditional = !state.isTraditional;
+        localStorage.setItem('lang_traditional', state.isTraditional);
+        updateLangToggleBtn();
+        updateStaticTexts();
+        renderVolumeTabs();
+        applyFilters();
         if (els.poemModal.classList.contains('active') && state.currentPoemIndex !== -1) {
           openPoemDetail(state.currentPoemIndex);
         }
+        showToast(state.isTraditional ? '已切换为繁体中文' : '已切换为简体中文');
       });
     }
-
-    // 上一首 / 下一首 / 目录 导航
     if (els.btnPrevPoem) {
       els.btnPrevPoem.addEventListener('click', () => openPoemDetail(state.currentPoemIndex - 1));
     }
@@ -614,8 +595,6 @@
     if (els.btnToc) {
       els.btnToc.addEventListener('click', closeReader);
     }
-
-    // 点击弹窗内任意区域（除互动控件外）：演播模式先跳过动画，此后（及普通模式）直接关闭
     if (els.poemModal) {
       els.poemModal.addEventListener('click', (e) => {
         const isInteractive = e.target.closest('#btn-add-image, .gallery-item, #image-upload, .gallery-delete, .author-notes-details, .book-pagination');
@@ -628,17 +607,13 @@
         }
       });
     }
-
-    // 点击上传配图
     if (els.btnAddImage && els.imageUpload) {
       els.btnAddImage.addEventListener('click', () => els.imageUpload.click());
-
       els.imageUpload.addEventListener('change', async (e) => {
         const files = e.target.files;
         if (!files || files.length === 0) return;
         const currentPoem = state.allPoems[state.currentPoemIndex];
         if (!currentPoem) return;
-
         for (let i = 0; i < files.length; i++) {
           const dataUrl = await compressImage(files[i]);
           await saveImage(currentPoem.id, dataUrl);
@@ -647,8 +622,6 @@
         els.imageUpload.value = '';
       });
     }
-
-    // 灯箱关闭与切换
     if (els.lightbox) {
       const lbOverlay = els.lightbox.querySelector('.lightbox-overlay');
       const lbClose = els.lightbox.querySelector('.lightbox-close');
@@ -671,8 +644,6 @@
         });
       }
     }
-
-    // 键盘：灯箱优先，其次阅读器切页/Esc
     document.addEventListener('keydown', (e) => {
       if (els.lightbox && els.lightbox.classList.contains('active')) {
         if (e.key === 'Escape') closeLightbox();
@@ -688,14 +659,11 @@
         }
         return;
       }
-
       if (!els.poemModal.classList.contains('active')) return;
       if (e.key === 'ArrowLeft') openPoemDetail(state.currentPoemIndex - 1);
       if (e.key === 'ArrowRight') openPoemDetail(state.currentPoemIndex + 1);
       if (e.key === 'Escape') closeReader();
     });
-
-    // 竖排模式滚轮转水平
     if (els.poemContentArea) {
       els.poemContentArea.addEventListener('wheel', (e) => {
         if (state.isVertical || els.poemContentArea.classList.contains('vertical-mode')) {
@@ -706,8 +674,6 @@
         }
       }, { passive: false });
     }
-
-    // 监听页面滚动：离开 Hero 区域后为导航栏加深色遮罩背景
     window.addEventListener('scroll', () => {
       if (els.nav) {
         if (window.scrollY > 60) {
@@ -717,41 +683,58 @@
         }
       }
     }, { passive: true });
+    if (els.navToggle && els.navLinks) {
+      els.navToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const open = els.navLinks.classList.toggle('open');
+        els.navToggle.classList.toggle('open', open);
+        els.navToggle.setAttribute('aria-expanded', String(open));
+      });
+      els.navLinks.addEventListener('click', (e) => {
+        if (e.target.classList.contains('nav-link')) {
+          els.navLinks.classList.remove('open');
+          els.navToggle.classList.remove('open');
+          els.navToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+      document.addEventListener('click', (e) => {
+        const isOpen = els.navLinks.classList.contains('open');
+        if (!isOpen) return;
+        if (els.navToggle.contains(e.target) || els.navLinks.contains(e.target)) return;
+        els.navLinks.classList.remove('open');
+        els.navToggle.classList.remove('open');
+        els.navToggle.setAttribute('aria-expanded', 'false');
+      });
+    }
   }
 
-  // ===== 初始化 =====
   async function init() {
     try {
-      // 移动端强制横排；桌面端默认优先竖排（或读取用户设置）
+      initConverter();
       if (isMobileScreen()) {
         state.isVertical = false;
       } else if (localStorage.getItem('layout_vertical') === null) {
         state.isVertical = true;
       }
-
       const res = await fetch('./index.json');
       if (!res.ok) throw new Error('网络请求异常');
       const data = await res.json();
-
       state.volumes = data.volumes || [];
       state.allPoems = data.poems || [];
-
-      // 初始化 IndexedDB（本地配图存储）
       await openDB();
-
       updateLayoutToggleBtn();
-      updateCinematicToggleBtn();
+      updateLangToggleBtn();
+      updateStaticTexts();
       renderVolumeTabs();
       applyFilters();
       initEventListeners();
-      // 初始同步一次导航栏状态（例如刷新时已滚动到中下部）
       if (els.nav) {
         els.nav.classList.toggle('scrolled', window.scrollY > 60);
       }
     } catch (e) {
       console.error('初始化失败:', e);
       if (els.poemsContainer) {
-        els.poemsContainer.innerHTML = `<p class="error-msg">加载失败：${e.message}（本地打开请使用 python -m http.server 提供本地服务器）</p>`;
+        els.poemsContainer.innerHTML = `<p class="error-msg">加载失败：${e.message}</p>`;
       }
     }
   }
