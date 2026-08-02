@@ -110,11 +110,13 @@ body {
   0% { 
     opacity: 0; 
     letter-spacing: 0.8em; 
+    padding-left: 0.8em;
     transform: scale(1.05) translateZ(0); 
   }
   100% { 
     opacity: 1; 
     letter-spacing: 0.5em; 
+    padding-left: 0.5em;
     transform: scale(1) translateZ(0); 
   }
 }
@@ -313,17 +315,20 @@ body {
 .hero-title {
   font-family: 'Long Cang', cursive, serif;
   color: var(--accent-gold);
-  font-size: clamp(6rem, 13vw, 11.5rem);
+  /* 调小移动端最小字号，防止强制单行后在小屏幕溢出 */
+  font-size: clamp(4.5rem, 13vw, 11.5rem);
   letter-spacing: 0.5em;
   text-shadow: var(--shadow-glow);
   margin-bottom: 2rem;
   padding-left: 0.5em;
   
-  /* 新增这两行：开启 GPU 渲染抗锯齿，防止动画结束时字体变细或跳动 */
+  /* 开启 GPU 渲染抗锯齿，防止动画结束时字体变细或跳动 */
   backface-visibility: hidden;
   transform: translateZ(0);
 
   animation: hero-title-in 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  /* 关键修复：强制不换行，杜绝标题变成两行闪烁 */
+  white-space: nowrap;
 }
 
 .hero-divider {

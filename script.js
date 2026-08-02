@@ -6,8 +6,8 @@
     filters: { volume: 'all', search: '' },
     isVertical: (localStorage.getItem('layout_vertical') === 'true') ||
                 (localStorage.getItem('layout_vertical') === null && window.innerWidth >= 768),
-    isCinematic: true, // 默认开启高级沉浸演播模式
-    isTraditional: localStorage.getItem('lang_traditional') === 'true', // 简繁体状态
+    isCinematic: true, 
+    isTraditional: localStorage.getItem('lang_traditional') === 'true', 
     cinematicTimers: [],
     db: null,
     lightbox: { images: [], currentIndex: 0 }
@@ -193,7 +193,7 @@
     if (d1 && d2) {
       d1.classList.remove('animate');
       d2.classList.remove('animate');
-      void d1.offsetWidth; // 强行触发 DOM 重绘
+      void d1.offsetWidth; 
       d1.classList.add('animate');
       d2.classList.add('animate');
     }
@@ -297,7 +297,9 @@
     const staticImages = (poem?.staticImages || []).map(path => `./云浮集_YunFuJi/${path}`);
     const dbImages = await getImages(poemId);
     const allUrls = [...staticImages, ...dbImages.map(img => img.dataUrl)];
+
     if (allUrls.length === 0) return [];
+
     staticImages.forEach((url, idx) => {
       const item = document.createElement('div');
       item.className = 'gallery-item';
@@ -308,6 +310,7 @@
       item.appendChild(imgEl);
       els.poemImagesGallery.appendChild(item);
     });
+
     dbImages.forEach((img, idx) => {
       const globalIdx = staticImages.length + idx;
       const item = document.createElement('div');
@@ -331,6 +334,7 @@
       item.appendChild(delBtn);
       els.poemImagesGallery.appendChild(item);
     });
+
     const imageElements = Array.from(els.poemImagesGallery.querySelectorAll('img'));
     await Promise.all(imageElements.map(img => {
       if (img.complete) return Promise.resolve();
@@ -339,6 +343,7 @@
         img.addEventListener('error', resolve, { once: true });
       });
     }));
+
     return allUrls;
   }
 
@@ -375,20 +380,25 @@
   function renderCollection(poems) {
     if (!els.poemsContainer) return;
     els.poemsContainer.innerHTML = '';
+
     if (poems.length === 0) {
       els.poemsContainer.innerHTML = `<p class="empty-state">${conv('未找到匹配的诗词')}</p>`;
       return;
     }
+
     const grouped = {};
     poems.forEach(p => {
       if (!grouped[p.volume]) grouped[p.volume] = [];
       grouped[p.volume].push(p);
     });
+
     state.volumes.forEach(vol => {
       const poemsInVol = grouped[vol.id];
       if (!poemsInVol || poemsInVol.length === 0) return;
+
       const volSection = document.createElement('section');
       volSection.className = 'volume-section';
+
       if (vol.preface) {
         const prefDiv = document.createElement('div');
         prefDiv.className = 'volume-preface-card';
@@ -398,8 +408,10 @@
         `;
         volSection.appendChild(prefDiv);
       }
+
       const grid = document.createElement('div');
       grid.className = 'poems-grid';
+
       poemsInVol.forEach(poem => {
         const card = document.createElement('div');
         card.className = 'poem-card';
@@ -414,6 +426,7 @@
         });
         grid.appendChild(card);
       });
+
       volSection.appendChild(grid);
       els.poemsContainer.appendChild(volSection);
     });
@@ -438,13 +451,15 @@
   async function openPoemDetail(index) {
     if (index < 0 || index >= state.allPoems.length) return;
     clearCinematicTimers();
-    triggerInkSplash(); // 每次打开诗词触发一抹水墨扩散
+    triggerInkSplash(); 
     state.currentPoemIndex = index;
     const poem = state.allPoems[index];
+
     const modalContainer = els.poemModal.querySelector('.modal-container');
     if (modalContainer) {
       modalContainer.scrollTop = 0;
     }
+
     if (els.btnPrevPoem) els.btnPrevPoem.disabled = (index === 0);
     if (els.btnNextPoem) els.btnNextPoem.disabled = (index === state.allPoems.length - 1);
 
@@ -463,6 +478,7 @@
         els.poemTranslationBlock.style.display = 'none';
       }
     }
+
     if (els.authorNotesDetails && els.authorNotesContent) {
       if (poem.notes) {
         els.authorNotesContent.textContent = conv(poem.notes);
@@ -472,13 +488,14 @@
         els.authorNotesDetails.style.display = 'none';
       }
     }
+
     const allUrls = await renderPoemImages(poem.id);
     const headerEl = els.poemModal ? els.poemModal.querySelector('.poem-header') : null;
     let baseLineDelay = 0;
 
-    // 沉浸演播模式（默认常开）
     els.poemModal.classList.add('cinematic-mode');
     els.poemModal.classList.remove('skip-animation');
+
     const firstImageUrl = allUrls[0] || null;
     if (firstImageUrl && els.poemCinematicBg) {
       els.poemCinematicBg.style.backgroundImage = `url("${firstImageUrl}")`;
@@ -492,6 +509,7 @@
       els.poemCinematicBg.className = 'poem-cinematic-bg';
       baseLineDelay = 0.4;
     }
+
     if (headerEl) {
       headerEl.classList.remove('cinematic-header');
       void headerEl.offsetWidth;
@@ -510,8 +528,10 @@
         if (els.poemContentArea) els.poemContentArea.classList.remove('vertical-mode');
       }
     }
+
     openReader();
     resetReaderScrollPositions();
+
     const lineCount = poem.content.split('\n').filter(l => l.trim()).length;
     const totalDelay = baseLineDelay + Math.max(0, lineCount - 1) * 0.75 + 1.1;
     state.cinematicTimers.push(setTimeout(() => {
@@ -544,7 +564,9 @@
     state.isVertical = !state.isVertical;
     localStorage.setItem('layout_vertical', state.isVertical);
     updateLayoutToggleBtn();
+
     if (!els.poemModal.classList.contains('active') || !els.poemText) return;
+
     if (state.isVertical) {
       els.poemText.classList.add('vertical');
       if (els.poemContentArea) {
@@ -570,12 +592,14 @@
         applyFilters();
       });
     }
+
     if (els.searchInput) {
       els.searchInput.addEventListener('input', debounce((e) => {
         state.filters.search = e.target.value.trim();
         applyFilters();
       }, 300));
     }
+
     if (els.btnRandomPoem) {
       els.btnRandomPoem.addEventListener('click', () => {
         if (state.allPoems.length === 0) return;
@@ -583,9 +607,11 @@
         openPoemDetail(randomIndex);
       });
     }
+
     if (els.btnToggleLayout) {
       els.btnToggleLayout.addEventListener('click', toggleVertical);
     }
+
     if (els.btnToggleLang) {
       els.btnToggleLang.addEventListener('click', () => {
         state.isTraditional = !state.isTraditional;
@@ -600,17 +626,51 @@
         showToast(state.isTraditional ? '已切换为繁体中文' : '已切换为简体中文');
       });
     }
+
     if (els.btnPrevPoem) {
       els.btnPrevPoem.addEventListener('click', () => openPoemDetail(state.currentPoemIndex - 1));
     }
     if (els.btnNextPoem) {
       els.btnNextPoem.addEventListener('click', () => openPoemDetail(state.currentPoemIndex + 1));
     }
+
     if (els.btnToc) {
       els.btnToc.addEventListener('click', closeReader);
     }
+
     if (els.poemModal) {
+      let mouseDownX = 0;
+      let mouseDownY = 0;
+      let isDragging = false;
+
+      els.poemModal.addEventListener('mousedown', (e) => {
+        mouseDownX = e.clientX;
+        mouseDownY = e.clientY;
+        isDragging = false;
+      });
+
+      els.poemModal.addEventListener('mouseup', (e) => {
+        const dx = Math.abs(e.clientX - mouseDownX);
+        const dy = Math.abs(e.clientY - mouseDownY);
+        if (dx > 5 || dy > 5) {
+          isDragging = true;
+        }
+      });
+
       els.poemModal.addEventListener('click', (e) => {
+        // 1. 如果用户划选/选中了文本，不处理退出
+        const selection = window.getSelection();
+        if (selection && selection.toString().trim().length > 0) {
+          return;
+        }
+
+        // 2. 如果存在划拽/拖选动作，不处理退出
+        if (isDragging) {
+          isDragging = false;
+          return;
+        }
+
+        // 3. 判断是否点击了按钮、图库、顶部控制栏等交互元素
         const isInteractive = e.target.closest('#btn-add-image, .gallery-item, #image-upload, .gallery-delete, .author-notes-details, .book-pagination');
         if (!isInteractive) {
           if (els.poemModal.classList.contains('cinematic-mode') && !els.poemModal.classList.contains('skip-animation')) {
@@ -621,6 +681,7 @@
         }
       });
     }
+
     if (els.btnAddImage && els.imageUpload) {
       els.btnAddImage.addEventListener('click', () => els.imageUpload.click());
       els.imageUpload.addEventListener('change', async (e) => {
@@ -628,6 +689,7 @@
         if (!files || files.length === 0) return;
         const currentPoem = state.allPoems[state.currentPoemIndex];
         if (!currentPoem) return;
+
         for (let i = 0; i < files.length; i++) {
           const dataUrl = await compressImage(files[i]);
           await saveImage(currentPoem.id, dataUrl);
@@ -636,13 +698,16 @@
         els.imageUpload.value = '';
       });
     }
+
     if (els.lightbox) {
       const lbOverlay = els.lightbox.querySelector('.lightbox-overlay');
       const lbClose = els.lightbox.querySelector('.lightbox-close');
       const lbPrev = els.lightbox.querySelector('.lightbox-prev');
       const lbNext = els.lightbox.querySelector('.lightbox-next');
+
       if (lbOverlay) lbOverlay.addEventListener('click', closeLightbox);
       if (lbClose) lbClose.addEventListener('click', closeLightbox);
+
       if (lbPrev) {
         lbPrev.addEventListener('click', () => {
           if (state.lightbox.images.length === 0) return;
@@ -650,6 +715,7 @@
           updateLightboxImage();
         });
       }
+
       if (lbNext) {
         lbNext.addEventListener('click', () => {
           if (state.lightbox.images.length === 0) return;
@@ -658,6 +724,7 @@
         });
       }
     }
+
     document.addEventListener('keydown', (e) => {
       if (els.lightbox && els.lightbox.classList.contains('active')) {
         if (e.key === 'Escape') closeLightbox();
@@ -673,11 +740,13 @@
         }
         return;
       }
+
       if (!els.poemModal.classList.contains('active')) return;
       if (e.key === 'ArrowLeft') openPoemDetail(state.currentPoemIndex - 1);
       if (e.key === 'ArrowRight') openPoemDetail(state.currentPoemIndex + 1);
       if (e.key === 'Escape') closeReader();
     });
+
     if (els.poemContentArea) {
       els.poemContentArea.addEventListener('wheel', (e) => {
         if (state.isVertical || els.poemContentArea.classList.contains('vertical-mode')) {
@@ -688,6 +757,7 @@
         }
       }, { passive: false });
     }
+
     window.addEventListener('scroll', () => {
       if (els.nav) {
         if (window.scrollY > 60) {
@@ -697,6 +767,7 @@
         }
       }
     }, { passive: true });
+
     if (els.navToggle && els.navLinks) {
       els.navToggle.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -704,6 +775,7 @@
         els.navToggle.classList.toggle('open', open);
         els.navToggle.setAttribute('aria-expanded', String(open));
       });
+
       els.navLinks.addEventListener('click', (e) => {
         if (e.target.classList.contains('nav-link')) {
           els.navLinks.classList.remove('open');
@@ -711,6 +783,7 @@
           els.navToggle.setAttribute('aria-expanded', 'false');
         }
       });
+
       document.addEventListener('click', (e) => {
         const isOpen = els.navLinks.classList.contains('open');
         if (!isOpen) return;
@@ -725,23 +798,28 @@
   async function init() {
     try {
       initConverter();
+
       if (isMobileScreen()) {
         state.isVertical = false;
       } else if (localStorage.getItem('layout_vertical') === null) {
         state.isVertical = true;
       }
+
       const res = await fetch('./index.json');
       if (!res.ok) throw new Error('网络请求异常');
       const data = await res.json();
       state.volumes = data.volumes || [];
       state.allPoems = data.poems || [];
+
       await openDB();
+
       updateLayoutToggleBtn();
       updateLangToggleBtn();
       updateStaticTexts();
       renderVolumeTabs();
       applyFilters();
       initEventListeners();
+
       if (els.nav) {
         els.nav.classList.toggle('scrolled', window.scrollY > 60);
       }
