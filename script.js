@@ -807,35 +807,52 @@
 
   async function init() {
     try {
+      // === 1. 强制刷新后重置回卷首主页（禁用浏览器记忆位置） ===
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      // 如果 URL 带有锚点（如 #collection），清除它防止页面跳动
+      if (window.location.hash) {
+        history.replaceState(null, document.title, window.location.pathname + window.location.search);
+      }
+      // 强制滚动到顶部卷首
+      window.scrollTo(0, 0);
+
       initConverter();
       if (isMobileScreen()) {
         state.isVertical = false;
       } else if (localStorage.getItem('layout_vertical') === null) {
         state.isVertical = true;
       }
-      
-      // === 1. 监听字体加载就绪，触发入场动画 ===
+
+      // === 2. 解决 GitHub Pages 移动端缓存导致跳过动画的问题 ===
       const startApp = () => {
-        if (!document.body.classList.contains('fonts-loaded')) {
-          document.body.classList.add('fonts-loaded');
-        }
+        if (document.body.classList.contains('fonts-loaded')) return;
+
+        // 强制浏览器先绘制初始隐藏帧（Frame 1），再在下一帧触发动画（Frame 2）
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            setTimeout(() => {
+              document.body.classList.add('fonts-loaded');
+            }, 120); // 给予 120ms 延时，确保移动端 GPU 渲染准备就绪
+          });
+        });
       };
 
-      // 兜底机制：最长等待 1.8 秒，防止极慢网络下页面白屏
+      // 兜底机制：最长等待 1.8 秒
       const fontTimeout = setTimeout(startApp, 1800);
 
       if (document.fonts && document.fonts.ready) {
         document.fonts.ready.then(() => {
           clearTimeout(fontTimeout);
-          // 稍微平滑延迟 50ms 触发
-          setTimeout(startApp, 50);
+          startApp();
         });
       } else {
         clearTimeout(fontTimeout);
         startApp();
       }
 
-      // === 2. 加载诗词数据 ===
+      // === 3. 加载诗词数据 ===
       const res = await fetch('./index.json');
       if (!res.ok) throw new Error('网络请求异常');
       const data = await res.json();
