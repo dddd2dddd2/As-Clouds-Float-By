@@ -808,11 +808,6 @@ body.fonts-loaded .hero-cta {
 /* ========================================
    Poem Cards (.poem-card)
    ======================================== */
-.poem-card,
-.volume-preface-card {
-  scroll-margin-top: calc(var(--sticky-offset, 140px) + 12px);
-}
-
 .poem-card {
   position: relative;
   background-color: var(--bg-card);
