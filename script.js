@@ -316,6 +316,7 @@
       const imgEl = document.createElement('img');
       imgEl.src = url;
       imgEl.alt = '配图';
+      imgEl.loading = 'lazy';
       imgEl.addEventListener('click', () => openLightbox(allUrls, idx));
       item.appendChild(imgEl);
       els.poemImagesGallery.appendChild(item);
@@ -328,6 +329,7 @@
       const imgEl = document.createElement('img');
       imgEl.src = img.dataUrl;
       imgEl.alt = '配图';
+      imgEl.loading = 'lazy';
       imgEl.addEventListener('click', () => openLightbox(allUrls, globalIdx));
       const delBtn = document.createElement('button');
       delBtn.className = 'gallery-delete';
@@ -345,14 +347,14 @@
       els.poemImagesGallery.appendChild(item);
     });
 
-    const imageElements = Array.from(els.poemImagesGallery.querySelectorAll('img'));
-    await Promise.all(imageElements.map(img => {
-      if (img.complete) return Promise.resolve();
-      return new Promise(resolve => {
-        img.addEventListener('load', resolve, { once: true });
-        img.addEventListener('error', resolve, { once: true });
+    const firstImg = els.poemImagesGallery.querySelector('img');
+    if (firstImg && !firstImg.complete) {
+      await new Promise(resolve => {
+        firstImg.addEventListener('load', resolve, { once: true });
+        firstImg.addEventListener('error', resolve, { once: true });
+        setTimeout(resolve, 2000);
       });
-    }));
+    }
 
     return allUrls;
   }
@@ -601,7 +603,7 @@
         state.filters.volume = e.target.dataset.vol;
         applyFilters();
 
-        const firstCard = els.poemsContainer.querySelector('.poem-card');
+        const firstCard = els.poemsContainer.querySelector('.poem-card, .volume-preface-card');
         if (firstCard) {
           firstCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
@@ -792,6 +794,21 @@
         { threshold: 0 }
       );
       brandObserver.observe(heroTitleEl);
+    }
+
+    function syncStickyOffset() {
+      const navH = els.nav?.offsetHeight || 0;
+      const filterSection = document.getElementById('filter-section');
+      const filterH = filterSection?.offsetHeight || 0;
+      document.documentElement.style.setProperty('--sticky-offset', `${navH + filterH}px`);
+    }
+    syncStickyOffset();
+    window.addEventListener('resize', debounce(syncStickyOffset, 150));
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(syncStickyOffset);
+      const filterSection = document.getElementById('filter-section');
+      if (filterSection) ro.observe(filterSection);
+      if (els.nav) ro.observe(els.nav);
     }
 
     if (els.navToggle && els.navLinks) {

@@ -44,7 +44,7 @@
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: var(--nav-height);
+  scroll-padding-top: var(--sticky-offset, 140px);
 }
 
 body {
@@ -116,8 +116,6 @@ body {
   }
   100% { 
     opacity: 1; 
-    letter-spacing: 0.5em; 
-    padding-left: 0.5em;
     transform: scale(1) translateZ(0); 
   }
 }
@@ -367,10 +365,27 @@ body.fonts-loaded .hero-en {
 /* 毛笔大标题：云 浮 集 */
 .hero-title {
   font-family: var(--font-brand);
-  color: var(--accent-gold);
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: clamp(4.5rem, 13vw, 11.5rem);
   letter-spacing: 0.5em;
-  text-shadow: var(--shadow-glow);
+  background-image:
+    linear-gradient(180deg,
+      #fff4d0 0%,
+      #f6dd94 20%,
+      #d9a94a 40%,
+      #fdeeb0 52%,
+      #cf9c4e 72%,
+      #9a7433 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.07 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-blend-mode: overlay;
+  background-size: 100% 100%, 140px 140px;
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow:
+    0 1px 0 rgba(255, 250, 225, 0.55),
+    0 -1px 1px rgba(0, 0, 0, 0.3),
+    0 3px 6px rgba(0, 0, 0, 0.35);
   margin-bottom: 2rem;
   padding-left: 0.5em;
   backface-visibility: hidden;
@@ -793,6 +808,11 @@ body.fonts-loaded .hero-cta {
 /* ========================================
    Poem Cards (.poem-card)
    ======================================== */
+.poem-card,
+.volume-preface-card {
+  scroll-margin-top: calc(var(--sticky-offset, 140px) + 12px);
+}
+
 .poem-card {
   position: relative;
   background-color: var(--bg-card);
@@ -1681,7 +1701,9 @@ body.fonts-loaded .hero-cta {
   }
 
   .hero-title {
-    font-size: clamp(2.5rem, 10vw, 4rem);
+    font-size: clamp(3.2rem, 20vw, 6rem);
+    letter-spacing: 0em;
+    padding-left: 0;
   }
 
   .poems-grid {

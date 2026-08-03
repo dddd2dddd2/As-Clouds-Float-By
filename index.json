@@ -5,8 +5,8 @@
     "motto": "莫问春迟，且看云浮；浮云也有归时节。",
     "introduction": "《云浮集》简介与英文名\n- **中文书名**：云浮集\n- **英文书名**：Drifting Clouds / Watch the Clouds Drift\n- **核心诗意**：“莫问春迟，且看云浮；浮云也有归时节。”",
     "preface": "《云浮集》自序\n在此写入您的自序与前言...",
-    "totalPoems": 20,
-    "lastUpdated": "2026-08-03T12:04:31.760491"
+    "totalPoems": 21,
+    "lastUpdated": "2026-08-03T21:50:24.554898"
   },
   "volumes": [
     {
@@ -324,12 +324,26 @@
     },
     {
       "id": "v4-04",
-      "title": "浣溪沙·酒罢试茶",
+      "title": "浣溪沙·小雨新停杯影斜",
       "cipai": "浣溪沙",
       "genre": "诗",
       "volume": 4,
-      "source": "04_卷四_人间烟火/04_浣溪沙_酒罢试茶.md",
+      "source": "04_卷四_人间烟火/04_浣溪沙_小雨新停杯影斜.md",
       "content": "小雨新停杯影斜，\n碧瓯微暖试团茶。\n闲看雏燕入谁家。\n\n偶向人前称未老，\n醉来偏惜鬓边花。\n一回风起一回遮。",
+      "epigraph": "",
+      "dateLocation": "",
+      "translation": "",
+      "notes": "",
+      "staticImages": []
+    },
+    {
+      "id": "v4-05",
+      "title": "浣溪沙·旧院春迟燕入家",
+      "cipai": "浣溪沙",
+      "genre": "诗",
+      "volume": 4,
+      "source": "04_卷四_人间烟火/05_浣溪沙_旧院春迟燕入家.md",
+      "content": "旧院春迟燕入家，\n小楼晴暖照庭花。 \n几声儿语绕檐牙。 \n\n花落才惊昨日梦， \n酒醒方觉近窗纱。 \n一夜东风换年华。",
       "epigraph": "",
       "dateLocation": "",
       "translation": "",
