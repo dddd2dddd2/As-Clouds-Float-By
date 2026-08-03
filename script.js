@@ -91,7 +91,7 @@
     if (heroSubQuote) heroSubQuote.textContent = conv('浮云也有归时节');
     if (heroCta) heroCta.textContent = conv('翻阅诗集');
     if (els.randomText) els.randomText.textContent = conv('随缘');
-    if (footerTitle) footerTitle.textContent = conv('云浮集 · As Clouds Float By');
+    if (footerTitle) footerTitle.innerHTML = '<span class="brand-cn">云浮集</span> · As Clouds Float By';
     if (footerSub) footerSub.textContent = conv('莫问春迟，且看云浮');
 
     if (navLinks.length >= 3) {
@@ -600,6 +600,11 @@
         e.target.classList.add('active');
         state.filters.volume = e.target.dataset.vol;
         applyFilters();
+
+        const firstCard = els.poemsContainer.querySelector('.poem-card');
+        if (firstCard) {
+          firstCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       });
     }
 
@@ -777,6 +782,17 @@
         }
       }
     }, { passive: true });
+
+    const heroTitleEl = document.querySelector('.hero-title');
+    if (heroTitleEl && 'IntersectionObserver' in window) {
+      const brandObserver = new IntersectionObserver(
+        ([entry]) => {
+          els.nav.classList.toggle('show-brand', !entry.isIntersecting);
+        },
+        { threshold: 0 }
+      );
+      brandObserver.observe(heroTitleEl);
+    }
 
     if (els.navToggle && els.navLinks) {
       els.navToggle.addEventListener('click', (e) => {
