@@ -5,8 +5,8 @@
     "motto": "莫问春迟，且看云浮；浮云也有归时节。",
     "introduction": "《云浮集》简介与英文名\n- **中文书名**：云浮集\n- **英文书名**：Drifting Clouds / Watch the Clouds Drift\n- **核心诗意**：“莫问春迟，且看云浮；浮云也有归时节。”",
     "preface": "《云浮集》自序\n在此写入您的自序与前言...",
-    "totalPoems": 21,
-    "lastUpdated": "2026-08-04T15:14:09.572669"
+    "totalPoems": 22,
+    "lastUpdated": "2026-08-04T21:46:18.278285"
   },
   "volumes": [
     {
@@ -349,6 +349,22 @@
       "translation": "",
       "notes": "",
       "staticImages": []
+    },
+    {
+      "id": "v4-06",
+      "title": "浣溪沙·酒满深瓯色更浓",
+      "cipai": "浣溪沙",
+      "genre": "诗",
+      "volume": 4,
+      "source": "04_卷四_人间烟火/06_浣溪沙_酒满深瓯色更浓.md",
+      "content": "酒满深瓯色更浓，\n隔帘笑语尚朦胧。\n一杯聊与晚烟同。\n\n世味而今成一醉，\n此身何处不从容。\n临归忘了掩屏风。",
+      "epigraph": "",
+      "dateLocation": "",
+      "translation": "",
+      "notes": "",
+      "staticImages": [
+        "04_卷四_人间烟火/06_浣溪沙_酒满深瓯色更浓.png"
+      ]
     }
   ]
 }

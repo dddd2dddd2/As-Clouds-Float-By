@@ -988,6 +988,7 @@ body.fonts-loaded .hero-cta {
 }
 @media (min-width: 769px) {
   .poem-content-area.vertical-mode {
+    display: flex !important; /* 新增：启用 Flex 布局来智能居中 */
     direction: rtl !important;
     overflow-x: auto !important;
     overflow-y: hidden !important;
@@ -1001,9 +1002,9 @@ body.fonts-loaded .hero-cta {
     white-space: nowrap;
     padding: 10px 30px;
     margin-left: auto !important;  
-    margin-right: 0 !important;
+    margin-right: auto !important; /* 修改：由 0 改为 auto，利用 flex 自动均分剩余空间实现居中 */
     direction: ltr;
-    display: inline-block !important;
+    display: block !important;     /* 修改：由 inline-block 改为 block */
     min-width: max-content !important;
     flex-shrink: 0 !important;
   }
