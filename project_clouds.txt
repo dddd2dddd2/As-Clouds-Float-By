@@ -242,6 +242,13 @@ if __name__ == "__main__":
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>云浮集 — As Clouds Float By</title>
+  <meta name="description" content="云浮集 · As Clouds Float By —— 一部原创古典诗词集">
+  <meta property="og:title" content="云浮集 — As Clouds Float By">
+  <meta property="og:description" content="莫问春迟，且看云浮；浮云也有归时节。">
+  <meta property="og:image" content="./云浮集_YunFuJi/07_其他/Front.png">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" href="./云浮集_YunFuJi/07_其他/Front.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -350,14 +357,14 @@ if __name__ == "__main__":
   </div>
   <footer id="footer">
     <div class="footer-inner">
-      <p class="footer-title">云浮集 · As Clouds Float By</p>
+      <p class="footer-title"><span class="brand-cn">云浮集</span> · As Clouds Float By</p>
       <p class="footer-sub">莫问春迟，且看云浮</p>
       <div class="footer-authors">
         <span class="author-label">作者 / Author</span>
         <div class="author-links">
           <a href="https://github.com/dddd2dddd2" target="_blank" rel="noopener noreferrer">dddd2dddd2</a>
           <span class="author-sep">·</span>
-          <a href="https://github.com/hippohippo-ai" target="_blank" rel="noopener noreferrer">hippohippo-ai</a>
+          <a href="https://github.com/hippohippo-ai" target="_blank" rel="noopener noreferrer">SomethingHippo</a>
         </div>
       </div>
     </div>
@@ -367,7 +374,7 @@ if __name__ == "__main__":
     <button class="lightbox-close" aria-label="关闭">&times;</button>
     <button class="lightbox-prev" aria-label="上一张">‹</button>
     <button class="lightbox-next" aria-label="下一张">›</button>
-    <img class="lightbox-image" id="lightbox-image" alt="配图大图预览">
+    <img class="lightbox-image" id="lightbox-image" alt="配图大图预览" loading="lazy">
   </div>
   <script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/full.js"></script>
   <script src="script.js"></script>
@@ -382,8 +389,8 @@ if __name__ == "__main__":
     "motto": "莫问春迟，且看云浮；浮云也有归时节。",
     "introduction": "《云浮集》简介与英文名\n- **中文书名**：云浮集\n- **英文书名**：Drifting Clouds / Watch the Clouds Drift\n- **核心诗意**：“莫问春迟，且看云浮；浮云也有归时节。”",
     "preface": "《云浮集》自序\n在此写入您的自序与前言...",
-    "totalPoems": 19,
-    "lastUpdated": "2026-08-02T20:04:24.334974"
+    "totalPoems": 21,
+    "lastUpdated": "2026-08-03T22:09:21.411841"
   },
   "volumes": [
     {
@@ -420,6 +427,7 @@ if __name__ == "__main__":
     "乐府",
     "五古",
     "卜算子",
+    "浣溪沙",
     "蝶恋花",
     "行香子"
   ],
@@ -697,6 +705,34 @@ if __name__ == "__main__":
       "translation": "",
       "notes": "",
       "staticImages": []
+    },
+    {
+      "id": "v4-04",
+      "title": "浣溪沙·小雨新停杯影斜",
+      "cipai": "浣溪沙",
+      "genre": "诗",
+      "volume": 4,
+      "source": "04_卷四_人间烟火/04_浣溪沙_小雨新停杯影斜.md",
+      "content": "小雨新停杯影斜，\n碧瓯微暖试团茶。\n闲看雏燕入谁家。\n\n偶向人前称未老，\n醉来偏惜鬓边花。\n一回风起一回遮。",
+      "epigraph": "",
+      "dateLocation": "",
+      "translation": "",
+      "notes": "",
+      "staticImages": []
+    },
+    {
+      "id": "v4-05",
+      "title": "浣溪沙·旧院春迟燕入家",
+      "cipai": "浣溪沙",
+      "genre": "诗",
+      "volume": 4,
+      "source": "04_卷四_人间烟火/05_浣溪沙_旧院春迟燕入家.md",
+      "content": "旧院春迟燕入家，\n小楼晴暖照庭花。 \n几声儿语绕檐牙。 \n\n花落才惊昨日梦， \n酒醒方觉近窗纱。 \n一夜东风换年华。",
+      "epigraph": "",
+      "dateLocation": "",
+      "translation": "",
+      "notes": "",
+      "staticImages": []
     }
   ]
 }
@@ -860,12 +896,12 @@ python -m http.server 8000 --bind 127.0.0.1
     const footerTitle = document.querySelector('.footer-title');
     const footerSub = document.querySelector('.footer-sub');
     const navLinks = document.querySelectorAll('.nav-link');
-    if (heroTitle) heroTitle.textContent = conv('云 浮 集');
+    if (heroTitle) heroTitle.textContent = ('云 浮 集');
     if (heroQuote) heroQuote.textContent = conv('莫问春迟，且看云浮');
     if (heroSubQuote) heroSubQuote.textContent = conv('浮云也有归时节');
     if (heroCta) heroCta.textContent = conv('翻阅诗集');
     if (els.randomText) els.randomText.textContent = conv('随缘');
-    if (footerTitle) footerTitle.textContent = conv('云浮集 · As Clouds Float By');
+    if (footerTitle) footerTitle.innerHTML = '<span class="brand-cn">云浮集</span> · As Clouds Float By';
     if (footerSub) footerSub.textContent = conv('莫问春迟，且看云浮');
     if (navLinks.length >= 3) {
       navLinks[0].textContent = conv('卷首');
@@ -934,11 +970,15 @@ python -m http.server 8000 --bind 127.0.0.1
   function formatPoemContentCinematic(content, baseDelay = 0) {
     if (!content) return '';
     let delay = baseDelay;
+    const punctRegex = /([，。；？！、：,.;?!:])/g;
     return content.split('\n').map(line => {
       const trimmed = line.trim();
       if (!trimmed) return '<br>';
-      const clauses = trimmed.match(/[^，。；？！、]+[，。；？！、]?/g) || [trimmed];
-      const clausesHtml = clauses.map(c => `<span class="poem-clause">${c}</span>`).join('');
+      const clauses = trimmed.match(/[^，。；？！、：,.;?!:]+[，。；？！、：,.;?!:]?/g) || [trimmed];
+      const clausesHtml = clauses.map(c => {
+        const formattedClause = c.replace(punctRegex, '<span class="poem-punct">$1</span>');
+        return `<span class="poem-clause">${formattedClause}</span>`;
+      }).join('');
       const html = `<div class="poem-line cinematic-line" style="animation-delay: ${delay.toFixed(2)}s;">${clausesHtml}</div>`;
       delay += 0.75;
       return html;
@@ -1059,6 +1099,7 @@ python -m http.server 8000 --bind 127.0.0.1
       const imgEl = document.createElement('img');
       imgEl.src = url;
       imgEl.alt = '配图';
+      imgEl.loading = 'lazy';
       imgEl.addEventListener('click', () => openLightbox(allUrls, idx));
       item.appendChild(imgEl);
       els.poemImagesGallery.appendChild(item);
@@ -1070,6 +1111,7 @@ python -m http.server 8000 --bind 127.0.0.1
       const imgEl = document.createElement('img');
       imgEl.src = img.dataUrl;
       imgEl.alt = '配图';
+      imgEl.loading = 'lazy';
       imgEl.addEventListener('click', () => openLightbox(allUrls, globalIdx));
       const delBtn = document.createElement('button');
       delBtn.className = 'gallery-delete';
@@ -1086,14 +1128,14 @@ python -m http.server 8000 --bind 127.0.0.1
       item.appendChild(delBtn);
       els.poemImagesGallery.appendChild(item);
     });
-    const imageElements = Array.from(els.poemImagesGallery.querySelectorAll('img'));
-    await Promise.all(imageElements.map(img => {
-      if (img.complete) return Promise.resolve();
-      return new Promise(resolve => {
-        img.addEventListener('load', resolve, { once: true });
-        img.addEventListener('error', resolve, { once: true });
+    const firstImg = els.poemImagesGallery.querySelector('img');
+    if (firstImg && !firstImg.complete) {
+      await new Promise(resolve => {
+        firstImg.addEventListener('load', resolve, { once: true });
+        firstImg.addEventListener('error', resolve, { once: true });
+        setTimeout(resolve, 2000);
       });
-    }));
+    }
     return allUrls;
   }
   function openLightbox(images, index) {
@@ -1307,6 +1349,10 @@ python -m http.server 8000 --bind 127.0.0.1
         e.target.classList.add('active');
         state.filters.volume = e.target.dataset.vol;
         applyFilters();
+        const firstCard = els.poemsContainer.querySelector('.poem-card, .volume-preface-card');
+        if (firstCard) {
+          firstCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       });
     }
     if (els.searchInput) {
@@ -1459,6 +1505,30 @@ python -m http.server 8000 --bind 127.0.0.1
         }
       }
     }, { passive: true });
+    const heroTitleEl = document.querySelector('.hero-title');
+    if (heroTitleEl && 'IntersectionObserver' in window) {
+      const brandObserver = new IntersectionObserver(
+        ([entry]) => {
+          els.nav.classList.toggle('show-brand', !entry.isIntersecting);
+        },
+        { threshold: 0 }
+      );
+      brandObserver.observe(heroTitleEl);
+    }
+    function syncStickyOffset() {
+      const navH = els.nav?.offsetHeight || 0;
+      const filterSection = document.getElementById('filter-section');
+      const filterH = filterSection?.offsetHeight || 0;
+      document.documentElement.style.setProperty('--sticky-offset', `${navH + filterH}px`);
+    }
+    syncStickyOffset();
+    window.addEventListener('resize', debounce(syncStickyOffset, 150));
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(syncStickyOffset);
+      const filterSection = document.getElementById('filter-section');
+      if (filterSection) ro.observe(filterSection);
+      if (els.nav) ro.observe(els.nav);
+    }
     if (els.navToggle && els.navLinks) {
       els.navToggle.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -1485,11 +1555,38 @@ python -m http.server 8000 --bind 127.0.0.1
   }
   async function init() {
     try {
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      if (window.location.hash) {
+        history.replaceState(null, document.title, window.location.pathname + window.location.search);
+      }
+      window.scrollTo(0, 0);
       initConverter();
       if (isMobileScreen()) {
         state.isVertical = false;
       } else if (localStorage.getItem('layout_vertical') === null) {
         state.isVertical = true;
+      }
+      const startApp = () => {
+        if (document.body.classList.contains('fonts-loaded')) return;
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            setTimeout(() => {
+              document.body.classList.add('fonts-loaded');
+            }, 120); 
+          });
+        });
+      };
+      const fontTimeout = setTimeout(startApp, 1800);
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => {
+          clearTimeout(fontTimeout);
+          startApp();
+        });
+      } else {
+        clearTimeout(fontTimeout);
+        startApp();
       }
       const res = await fetch('./index.json');
       if (!res.ok) throw new Error('网络请求异常');
@@ -1540,6 +1637,7 @@ python -m http.server 8000 --bind 127.0.0.1
   --radius-lg: 16px;
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --font-heading: 'Noto Serif SC', 'STSong', serif;
+  --font-brand: 'Long Cang', cursive, serif;
   --font-body: 'Noto Serif SC', 'STSong', serif;
   --font-en: 'Georgia', serif;
 }
@@ -1550,7 +1648,7 @@ python -m http.server 8000 --bind 127.0.0.1
 }
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: var(--nav-height);
+  scroll-padding-top: var(--sticky-offset, 140px);
 }
 body {
   font-family: var(--font-body);
@@ -1607,10 +1705,15 @@ body {
   }
   100% { 
     opacity: 1; 
-    letter-spacing: 0.5em; 
-    padding-left: 0.5em;
     transform: scale(1) translateZ(0); 
   }
+}
+body:not(.fonts-loaded) #main-nav,
+body:not(.fonts-loaded) .hero-content,
+body:not(.fonts-loaded) .hero-bg,
+body:not(.fonts-loaded) .ink-blob {
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 #main-nav {
   position: fixed;
@@ -1620,7 +1723,11 @@ body {
   height: var(--nav-height);
   z-index: 1000;
   background: transparent;
-  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  opacity: 0;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, opacity 0.8s ease;
+}
+body.fonts-loaded #main-nav {
+  opacity: 1;
 }
 #main-nav.scrolled {
   background: rgba(13, 13, 18, 0.96) !important; 
@@ -1640,10 +1747,17 @@ body {
 }
 .nav-brand {
   color: var(--accent-gold);
-  font-family: var(--font-heading);
+  font-family: var(--font-brand);
   font-size: 1.5rem;
   text-decoration: none;
   font-weight: bold;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+#main-nav.show-brand .nav-brand {
+  opacity: 1;
+  pointer-events: auto;
 }
 .nav-links {
   display: flex;
@@ -1712,7 +1826,27 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: 0.6; 
+  opacity: 0;
+  transform: scale(1.28);
+  filter: blur(8px) brightness(1.2);
+}
+body.fonts-loaded .hero-bg {
+  animation: hero-bg-cinematic 6.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes hero-bg-cinematic {
+  0% {
+    opacity: 1;                             
+    transform: scale(1.28);                 
+    filter: blur(6px) brightness(1.2);      
+  }
+  20% {
+    filter: blur(0) brightness(1.1);        
+  }
+  100% {
+    opacity: 0.6;                           
+    transform: scale(1);                    
+    filter: blur(0) brightness(0.85);       
+  }
 }
 .hero-bg::after {
   content: '';
@@ -1771,28 +1905,62 @@ body {
   font-size: 0.9rem;
   margin-bottom: 1rem;
   opacity: 0;
-  animation: fade-in-up 1s forwards 0.3s;
+}
+body.fonts-loaded .hero-en {
+  animation: fade-in-up 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.8s;
 }
 .hero-title {
-  font-family: 'Long Cang', cursive, serif;
-  color: var(--accent-gold);
+  font-family: var(--font-brand);
+  color: transparent;
+  -webkit-text-fill-color: transparent;
   font-size: clamp(4.5rem, 13vw, 11.5rem);
   letter-spacing: 0.5em;
-  text-shadow: var(--shadow-glow);
+  background-image:
+    linear-gradient(180deg,
+      #fff4d0 0%,
+      #f6dd94 20%,
+      #d9a94a 40%,
+      #fdeeb0 52%,
+      #cf9c4e 72%,
+      #9a7433 100%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.07 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-blend-mode: overlay;
+  background-size: 100% 100%, 140px 140px;
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow:
+    0 1px 0 rgba(255, 250, 225, 0.55),
+    0 -1px 1px rgba(0, 0, 0, 0.3),
+    0 3px 6px rgba(0, 0, 0, 0.35);
   margin-bottom: 2rem;
   padding-left: 0.5em;
   backface-visibility: hidden;
   transform: translateZ(0);
-  animation: hero-title-in 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  opacity: 0;
   white-space: nowrap;
 }
+body.fonts-loaded .hero-title {
+  animation: hero-title-in 1.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 1.0s;
+}
 .hero-divider {
-  width: 60px;
+  width: 0px;
   height: 1px;
   background-color: var(--accent-gold);
   margin: 0 auto 2rem;
   opacity: 0;
-  animation: fade-in-up 1s forwards 0.8s;
+}
+body.fonts-loaded .hero-divider {
+  animation: hero-divider-expand 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 1.5s;
+}
+@keyframes hero-divider-expand {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  100% {
+    width: 60px;
+    opacity: 1;
+  }
 }
 .hero-quote {
   font-family: var(--font-body);
@@ -1800,7 +1968,9 @@ body {
   color: var(--text-primary);
   margin-top: 1rem;
   opacity: 0;
-  animation: fade-in-up 1s forwards 1s;
+}
+body.fonts-loaded .hero-quote {
+  animation: fade-in-up 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 1.7s;
 }
 .hero-sub-quote {
   font-family: var(--font-body);
@@ -1808,13 +1978,15 @@ body {
   color: var(--text-secondary);
   margin-top: 0.5rem;
   opacity: 0;
-  animation: fade-in-up 1s forwards 1.2s;
+}
+body.fonts-loaded .hero-sub-quote {
+  animation: fade-in-up 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 1.9s;
 }
 .hero-cta {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-top: 3rem;
+  margin-top: 4.5rem;
   padding: 12px 32px;
   border: 1px solid var(--accent-gold);
   border-radius: var(--radius);
@@ -1822,7 +1994,9 @@ body {
   text-decoration: none;
   transition: var(--transition);
   opacity: 0;
-  animation: fade-in-up 1s forwards 1.4s;
+}
+body.fonts-loaded .hero-cta {
+  animation: fade-in-up 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 2.1s;
 }
 .hero-cta:hover {
   background: var(--accent-gold);
@@ -1996,7 +2170,11 @@ body {
   padding: 0 24px;
   max-width: var(--max-width);
   margin: 0 auto;
-  scrollbar-width: thin;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.volume-tabs::-webkit-scrollbar {
+  display: none;
 }
 .volume-tab {
   background: transparent;
@@ -2375,6 +2553,9 @@ body {
     min-width: max-content !important;
     flex-shrink: 0 !important;
   }
+  .poem-text.vertical .poem-punct {
+    display: none !important;
+  }
 }
 @media (max-width: 768px) {
   .poem-content-area,
@@ -2608,7 +2789,6 @@ body {
 .modal.cinematic-mode .poem-line.cinematic-line {
   opacity: 0;
   transform: translateY(16px);
-  filter: blur(6px);
   animation: cinematic-line-in 1.1s ease forwards;
 }
 .poem-text.vertical .poem-line.cinematic-line {
@@ -2616,16 +2796,16 @@ body {
   animation-name: cinematic-line-in-v;
 }
 @keyframes cinematic-header-in {
-  0% { opacity: 0; transform: translateY(10px); filter: blur(8px); }
-  100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 @keyframes cinematic-line-in {
-  0% { opacity: 0; transform: translateY(16px); filter: blur(6px); }
-  100% { opacity: 1; transform: translateY(0); filter: blur(0); }
+  0% { opacity: 0; transform: translateY(16px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 @keyframes cinematic-line-in-v {
-  0% { opacity: 0; transform: translateX(16px); filter: blur(6px); }
-  100% { opacity: 1; transform: translateX(0); filter: blur(0); }
+  0% { opacity: 0; transform: translateX(16px); }
+  100% { opacity: 1; transform: translateX(0); }
 }
 .modal.cinematic-mode.skip-animation .cinematic-header,
 .modal.cinematic-mode.skip-animation .poem-line.cinematic-line,
@@ -2758,6 +2938,9 @@ body {
   font-size: 1.2rem;
   margin-bottom: 0.4rem;
 }
+.footer-title .brand-cn {
+  font-family: var(--font-brand);
+}
 .footer-sub {
   color: var(--text-dim);
   font-size: 0.88rem;
@@ -2834,7 +3017,9 @@ body {
     display: flex;
   }
   .hero-title {
-    font-size: clamp(2.5rem, 10vw, 4rem);
+    font-size: clamp(3.2rem, 20vw, 6rem);
+    letter-spacing: 0em;
+    padding-left: 0;
   }
   .poems-grid {
     grid-template-columns: 1fr;
@@ -2886,13 +3071,19 @@ body {
   }
 }
 .rice-paper-texture {
-  position: absolute;
-  inset: 0;
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  margin-bottom: -100vh; 
   pointer-events: none;
   z-index: 1;
-  opacity: 0.16; 
+  opacity: 0.22; 
   mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paperNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paperNoise)'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='paperNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23paperNoise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 160px 160px; 
 }
 .modal-container {
   position: relative;
@@ -2952,260 +3143,4 @@ body {
   50% { transform: translate(-3%, 2%) scale(1.06); }
   100% { transform: translate(3%, -2%) scale(0.96); }
 }
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/00_总纲与序言/01_诗集简介与英文名标定.md ===
-# 《云浮集》简介与英文名
-- **中文书名**：云浮集
-- **英文书名**：Drifting Clouds / Watch the Clouds Drift
-- **核心诗意**：“莫问春迟，且看云浮；浮云也有归时节。”
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/00_总纲与序言/02_自序与前言.md ===
-# 《云浮集》自序
-在此写入您的自序与前言...
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/00_总纲与序言/03_总目录与分类逻辑.md ===
-# 《云浮集》总目录
-- 卷一·婉约怀人
-- 卷二·剑气豪情
-- 卷三·汉魏高古
-- 卷四·人间烟火
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/01_卷一_婉约怀人/01_临江仙_旧梦.md ===
-# 临江仙·旧梦
-小院梧桐深闭，
-疏帘灯影微明。
-去年花下话分携。
-晚风惊柳絮，
-孤月照空庭。
-记得初逢时候，
-罗衣香暖花阴。
-玉筝空按旧时声。
-而今江上水，
-犹带故人行。
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/01_卷一_婉约怀人/02_蝶恋花_疏柳未遮.md ===
-# 蝶恋花·疏柳未遮
-疏柳未遮江上月，
-一夜微凉，
-吹落江边叶。
-欲寄平生未尽言，
-墨痕未干人先歇。
-旧路重来霜渐洁，
-桥外灯昏，
-犹照当年雪。
-莫问相逢何处诉，
-浮云也有归时节。
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/01_卷一_婉约怀人/03_一剪梅_疏竹侵阶.md ===
-# 一剪梅·疏竹侵阶
-疏竹侵阶晚色凉。
-一院残阳，一院微香。
-小窗依旧护轻霜，
-帘外昏黄，帘里昏黄。
-旧时罗袖已难忘。
-梦短更长，酒浅愁长。
-无端燕子过东墙，
-认得雕梁，不认红妆。
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/01_卷一_婉约怀人/04_一剪梅_半卷湘帘.md ===
-# 一剪梅·半卷湘帘
-半卷湘帘午梦迟。
-花影参差，柳影参差。
-当年人在曲阑西，
-欲说还疑，欲见还疑。
-玉炉香冷篆烟微。
-月上罗衣，风上罗衣。
-而今只有旧鸳机，
-梭也空飞，人也空归。
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/01_卷一_婉约怀人/05_一剪梅_小阁春深.md ===
-# 一剪梅·小阁春深
-小阁春深燕未归。
-烟锁苔矶，雨锁苔矶。
-旧时团扇倚银闺，
-人在斜晖，梦在斜晖。
-闲将红豆数成灰。
-数到心违，数到眉低。
-今宵只有月如期，
-照见花枝，不照伊衣。
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/01_卷一_婉约怀人/06_一剪梅_小院帘垂.md ===
-# 一剪梅·小院帘垂
-小院帘垂雨乍休。
-灯影初收，心影难收。
-去年同倚画阑头，
-人亦清秋，月亦清秋。
-半笺旧墨锁闲愁。
-香冷银钩，梦冷银钩。
-不知何处雁声幽，
-飞到西楼，飞到心头。
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/01_卷一_婉约怀人/07_行香子_风叩虚窗.md ===
-# 行香子·风叩虚窗
-风叩虚窗，月照孤楼。
-漫庭阶、疏雨刚休。
-挑残寒灯，细数清愁。
-正夜气冷，秋声寂，月光游。
-执手无期，相见何由？
-算此生、几度同舟？
-枕冷衾孤，诉尽凄幽。
-看红豆尽，罗衣冷，泪痕留。
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/01_卷一_婉约怀人/08_一剪梅_一树空明.md ===
-# 一剪梅·一树空明
-一树空明傍短篱。
-风也迟迟，雪也迟迟。
-隔窗微影倚寒枝，
-不是相思，只是添衣。
-欲问东君知不知。
-梅未成诗，人未成诗。
-晓钟敲断一痕曦，
-回首空庭，雪满乌丝。
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/02_卷二_剑气豪情/01_一剪梅_古铁.md ===
-# 一剪梅·古铁
-古铁无纹夜自腥。
-灯在残棂，人在残棂。
-北辰低压短檐楹。
-风不须鸣，瓦不须鸣。
-袖底何曾著不平。
-石到秋生，木到秋生。
-明朝若有叩关声。
-先动孤缨，后动孤缨。
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/02_卷二_剑气豪情/02_一剪梅_孤灯.md ===
-# 一剪梅·孤灯
-半卷残编倚石屏。
-雨打空庭，风过空庭。
-青灯照我到三更。
-字未曾成，意未曾平。
-莫向人间问姓名。
-瓦上霜明，檐下霜明。
-胸中尚有未销兵。
-梦也难平，醒也难平。
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/02_卷二_剑气豪情/03_一剪梅_观潮.md ===
-# 一剪梅·观潮
-野渡无人过晚潮。
-沙自低回，水自低回。
-旧舟横卧柳阴梢。
-缆已无声，橹已无声。
-曾向危楼借酒浇。
-袖有余温，砚有余温。
-如今不与浪争高。
-潮自东来，我自东来。
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/02_卷二_剑气豪情/04_一剪梅_冬晓.md ===
-# 一剪梅·冬晓
-一夜西风入小楼。
-漏尽灯残，衾冷难留。
-倚牖方知晓寒深，
-霜侵鬓角，雪满帘钩。
-炉火无声酒半瓯。
-旧砚尘封，客梦难收。
-平生也惯踏冰流，
-莫问春迟，且看云浮。
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/03_卷三_汉魏高古/01_五古_客从东方来.md ===
-# 客从东方来
-客从东方来，
-遗我尺素书。
-开书不敢读，
-泪下沾衣裾。
-上言父母安，
-下言故人疏。
-别离十五载，
-相见当何如。
-昔我出门时，
-杨柳未盈株。
-今日归来望，
-高木蔽吾庐。
-人生如寄耳，
-百岁亦须臾。
-但恐旧游处，
-不复见吾徒。
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/03_卷三_汉魏高古/02_五古_白日忽西驰.md ===
-# 白日忽西驰
-白日忽西驰，
-岁暮不可追。
-少壮游四方，
-归来鬓已衰。
-昔者同门友，
-零落各异时。
-东邻有新酒，
-谁与共一卮。
-出门见道路，
-行行复何之。
-高山不可越，
-流水无还期。
-荒庭秋草长，
-不见旧来时。
-欲问当年事，
-无人应我词。
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/03_卷三_汉魏高古/03_乐府_南塘歌.md ===
-# 南塘歌
-忆郎郎未归，春水满南塘。
-塘边折杨柳，柳色入衣裳。
-摘花花欲落，采莲莲正香。
-莲香随水去，不知向何方。
-日日临南浦，朝朝倚小窗。
-窗前双燕语，不见旧时郎。
-去年花满树，今岁枝犹芳。
-花开人未返，空过旧门堂。
-门前流水去，依旧向东流。
-潮来连远浦，烟重隔横塘。
-水远舟来迟，风来荷更香。
-双燕还入户，斜日照苔墙。
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/03_卷三_汉魏高古/04_乐府_折柳曲.md ===
----
-title: 折柳曲
-genre: 乐府
-notes: 丙午年六月二十，仿古之作。追慕汉魏乐府，学其顶针回环、句句相衔之法，于折柳离愁间写春陌一段闲情。柳、桥、溪、花、衣、枝、鸟、骑、陌、泥、履，首尾递接，如环无端；篇终阿娘唤归，而犹捻柳枝，笑不自知，离思遂化作眉间一缕轻烟，不必尽言，自有余味。西历二〇二六年八月二日记。
----
-柳覆小桥低，桥低绕清溪。
-清溪映花面，花面衬罗衣。
-罗衣挽春袖，春袖折青枝。
-枝动惊飞鸟，飞鸟避锦骑。
-锦骑踏芳陌，陌上满香泥。
-香泥沾新履，新履不曾移。
-移目不回头，回头日已西。
-日西阿娘唤，捻枝笑不知。
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/04_卷四_人间烟火/01_卜算子_夜半失衾.md ===
-# 卜算子·夜半失衾
-夜半觉衾虚，
-侧手空无处。
-却是身旁半幅温，
-尽向伊边去。
-欲唤还惊寤，
-欲曳还停住。
-膝抱团团到五更，
-窗外闻鸡语。
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/04_卷四_人间烟火/02_卜算子_又夜半失衾.md ===
-# 卜算子·又夜半失衾
-夜半觉寒生，
-侧手料无凭。
-却是身旁半幅温，
-尽向伊边倾。
-欲唤恐惊梦，
-欲曳复含情。
-膝抱唏唏到五更，
-恶向胆边生。
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/04_卷四_人间烟火/03_七律_寒村秋暮.md ===
-# 七律 寒村秋暮
-乱云低压晚山昏，荻花送雨入寒村。
-溪桥落叶迷归径，古渡疏烟锁暮痕。
-老叟临扉思稻熟，秋深未敢问年存。
-一声归雁横天外，孤灯犹照旧柴门。
-
-# === FILE: F:/New folder/New folder/repos/As-Clouds-Float-By/云浮集_YunFuJi/06_灵感与未完草稿箱/草稿模板.md ===
-# 灵感草稿模板
-- **时间**：
-- **词牌/体裁**：
-- **灵感/正文**：
 

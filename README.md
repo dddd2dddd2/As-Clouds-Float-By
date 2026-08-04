@@ -17,16 +17,25 @@ https://dddd2dddd2.github.io/As-Clouds-Float-By/
 - **卷四 · 人间烟火**：卜算子、七律
   *Volume IV · The Hearth of Mortal Life*: Busuanzi and regulated verse
 
-本项目附带一个简单的静态网页（`index.html`、`style.css`、`script.js`），用于在线浏览与展示全部诗词。
+本项目附带一个简单的静态网页（`index.html`、`style.css`、`js/`），用于在线浏览与展示全部诗词。
 
-*The project also includes a lightweight static website (`index.html`, `style.css`, `script.js`) for browsing and displaying all the poems online.*
+*The project also includes a lightweight static website (`index.html`, `style.css`, `js/`) for browsing and displaying all the poems online.*
 
 ## 目录结构 / Project Structure
 
 ```
 ├── index.html            # 展示页面 / display page
 ├── style.css             # 样式 / styles
-├── script.js             # 交互逻辑 / interactivity
+├── js/                   # 交互逻辑（ES Modules）/ interactivity
+│   ├── script.js         # 入口 / entry point
+│   ├── state.js          # 全局状态 / shared state
+│   ├── database.js       # IndexedDB 配图存储 / image storage
+│   ├── language.js       # 简繁转换 / language conversion
+│   ├── layout.js         # 布局切换 / layout toggle
+│   ├── animation.js      # 排版动画 / typography animation
+│   ├── gallery.js        # 配图与 Lightbox / gallery
+│   ├── search.js         # 筛选与搜索 / filter & search
+│   └── reader.js         # 阅读器 / reader modal
 ├── index.json            # 诗词数据 / poem data
 ├── build_index.py        # 构建 index.json / builds index.json
 ├── create_bundle.py      # 打包工具 / bundling utility
