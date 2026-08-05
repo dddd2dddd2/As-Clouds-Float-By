@@ -7,6 +7,8 @@ import { openDB, saveImage, compressImage } from './database.js';
 import { renderPoemImages, closeLightbox, updateLightboxImage } from './gallery.js';
 import { renderVolumeTabs, applyFilters } from './search.js';
 import { closeReader, openPoemDetail } from './reader.js';
+import { alignVerticalTitleAndContent } from './layout.js';
+
 
   function debounce(fn, wait) {
     let t;
@@ -216,7 +218,10 @@ import { closeReader, openPoemDetail } from './reader.js';
       document.documentElement.style.setProperty('--sticky-offset', `${navH + filterH}px`);
     }
     syncStickyOffset();
-    window.addEventListener('resize', debounce(syncStickyOffset, 150));
+    window.addEventListener('resize', debounce(() => {
+      syncStickyOffset();
+      alignVerticalTitleAndContent();
+    }, 150));
     if ('ResizeObserver' in window) {
       const ro = new ResizeObserver(syncStickyOffset);
       const filterSection = document.getElementById('filter-section');
