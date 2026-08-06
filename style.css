@@ -1063,11 +1063,16 @@ body.fonts-loaded .hero-cta {
   display: block !important;          
   width: max-content !important;     
   height: auto !important;           
-  margin-left: 1.6rem !important;     
+  margin-left: 0.7rem !important;     /* 【修改】从 1.6rem 缩小到 0.7rem ~ 0.8rem */
   margin-right: 0 !important;
   margin-top: 0 !important;
   margin-bottom: 0 !important;
   text-align: left !important;
+}
+.poem-text.vertical br {
+  display: block;
+  content: "";
+  margin-left: 0.5rem !important;
 }
 /* ===== 古风竖排断句规则 ===== */
 /* 句内短句以 inline-block 在同一竖列中自上而下排列（vertical-rl 中 display:block
