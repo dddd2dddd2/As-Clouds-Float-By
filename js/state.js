@@ -26,7 +26,7 @@ export const els = {
     navToggle: document.getElementById('nav-toggle'),
     navLinks: document.querySelector('.nav-links'),
     poemsContainer: document.getElementById('poems-container'),
-    volumeTabs: document.getElementById('volume-tabs'),
+    volumeSelect: document.getElementById('volume-select'),
     genreTabs: document.getElementById('genre-tabs'),
     viewModeToggle: document.getElementById('view-mode-toggle'),
     searchInput: document.getElementById('search-input'),

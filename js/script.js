@@ -5,7 +5,7 @@ import { isMobileScreen, updateLayoutToggleBtn, toggleVertical } from './layout.
 import { skipCinematicAnimation } from './animation.js';
 import { openDB, saveImage, compressImage } from './database.js';
 import { renderPoemImages, closeLightbox, updateLightboxImage } from './gallery.js';
-import { renderVolumeTabs, renderGenreTabs, applyFilters } from './search.js';
+import { renderVolumeSelect, renderGenreTabs, applyFilters } from './search.js';
 import { closeReader, openPoemDetail } from './reader.js';
 import { alignVerticalTitleAndContent } from './layout.js';
 
@@ -45,35 +45,70 @@ import { alignVerticalTitleAndContent } from './layout.js';
   }
 
   function initEventListeners() {
-    if (els.volumeTabs) {
-      els.volumeTabs.addEventListener('click', (e) => {
-        if (!e.target.classList.contains('volume-tab')) return;
-        els.volumeTabs.querySelectorAll('.volume-tab').forEach(t => t.classList.remove('active'));
-        e.target.classList.add('active');
-        state.filters.volume = e.target.dataset.vol;
+    // 自定义卷次下拉框事件逻辑
+    const customSelect = document.getElementById('custom-volume-select');
+    const customTrigger = document.getElementById('custom-select-trigger');
+    const customMenu = document.getElementById('custom-select-menu');
+
+    if (customTrigger && customSelect && customMenu) {
+      customTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = customSelect.classList.toggle('open');
+        customTrigger.setAttribute('aria-expanded', String(isOpen));
+      });
+
+      customMenu.addEventListener('click', (e) => {
+        const item = e.target.closest('.custom-select-item');
+        if (!item) return;
+        const value = item.dataset.value;
+        state.filters.volume = value;
+        if (els.volumeSelect) els.volumeSelect.value = value;
+
+        customSelect.classList.remove('open');
+        customTrigger.setAttribute('aria-expanded', 'false');
+
+        renderVolumeSelect();
         applyFilters();
-        const firstCard = els.poemsContainer.querySelector('.poem-card, .volume-preface-card');
+
+        const firstCard = els.poemsContainer.querySelector('.poem-card, .volume-preface-card, .timeline-node');
         if (firstCard) {
           firstCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       });
+
+      document.addEventListener('click', () => {
+        customSelect.classList.remove('open');
+        customTrigger.setAttribute('aria-expanded', 'false');
+      });
     }
+
+    // 切换模式（卷次目录 / 创作年谱）监听修复
+    if (els.viewModeToggle) {
+      els.viewModeToggle.addEventListener('click', (e) => {
+        const btn = e.target.closest('.btn-view-mode');
+        if (!btn) return;
+
+        els.viewModeToggle.querySelectorAll('.btn-view-mode').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        state.viewMode = btn.dataset.mode;
+        localStorage.setItem('view_mode', state.viewMode);
+
+        applyFilters();
+
+        // 切换视图时平滑滚动到列表起始区域
+        const collectionEl = document.getElementById('collection');
+        if (collectionEl) {
+          collectionEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    }
+
     if (els.genreTabs) {
       els.genreTabs.addEventListener('click', (e) => {
         if (!e.target.classList.contains('genre-tab')) return;
         els.genreTabs.querySelectorAll('.genre-tab').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
         state.filters.genre = e.target.dataset.genre;
-        applyFilters();
-      });
-    }
-    if (els.viewModeToggle) {
-      els.viewModeToggle.addEventListener('click', (e) => {
-        if (!e.target.classList.contains('btn-view-mode')) return;
-        els.viewModeToggle.querySelectorAll('.btn-view-mode').forEach(t => t.classList.remove('active'));
-        e.target.classList.add('active');
-        state.viewMode = e.target.dataset.mode;
-        localStorage.setItem('view_mode', state.viewMode);
         applyFilters();
       });
     }
@@ -99,7 +134,7 @@ import { alignVerticalTitleAndContent } from './layout.js';
         localStorage.setItem('lang_traditional', state.isTraditional);
         updateLangToggleBtn();
         updateStaticTexts();
-        renderVolumeTabs();
+        renderVolumeSelect();
         renderGenreTabs();
         applyFilters();
         if (els.poemModal.classList.contains('active') && state.currentPoemIndex !== -1) {
@@ -326,7 +361,7 @@ import { alignVerticalTitleAndContent } from './layout.js';
       updateLangToggleBtn();
       updateStaticTexts();
       syncViewModeToggle();
-      renderVolumeTabs();
+      renderVolumeSelect();
       renderGenreTabs();
       applyFilters();
       initEventListeners();

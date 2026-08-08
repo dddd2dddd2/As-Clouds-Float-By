@@ -55,7 +55,17 @@
 
   <section id="filter-section">
     <div class="filter-bar">
-      <div class="volume-tabs" id="volume-tabs"></div>
+      <div class="volume-select-group" id="volume-select-wrapper">
+        <select id="volume-select" aria-label="选择卷次" class="hidden-native-select">
+        </select>
+        <div class="custom-select-container" id="custom-volume-select">
+          <button type="button" class="custom-select-trigger" id="custom-select-trigger" aria-haspopup="listbox" aria-expanded="false">
+            <span class="custom-select-label" id="custom-select-label">全部卷次</span>
+            <span class="custom-select-arrow"></span>
+          </button>
+          <div class="custom-select-menu" id="custom-select-menu" role="listbox"></div>
+        </div>
+      </div>
       <div class="genre-tabs" id="genre-tabs"></div>
       <div class="view-mode-toggle" id="view-mode-toggle">
         <button class="btn-view-mode active" data-mode="volume">卷次目录</button>
@@ -114,7 +124,7 @@
         <p class="poem-date-location" id="poem-date-location"></p>
         <footer class="poem-footer-details">
           <div class="poem-translation-block" id="poem-translation-block">
-            <h4 class="translation-label">English Translation</h4>
+            <h4 class="translation-label">详解</h4>
             <div class="poem-translation-text" id="poem-translation-text"></div>
           </div>
           <details class="author-notes-details" id="author-notes-details">
