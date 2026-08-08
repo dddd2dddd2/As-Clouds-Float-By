@@ -1,58 +1,130 @@
-// search.js —— 卷次筛选、关键词搜索、诗词列表渲染
+// search.js —— 视图切换、卷次筛选、体裁筛选、关键词搜索、诗词列表渲染
 import { state, els } from './state.js';
 import { conv } from './language.js';
 import { openPoemDetail, showCipaiModal } from './reader.js';
 import { CIPAI_DB } from './cipai_db.js';
 
-export function renderVolumeSelect() {
-  if (!els.volumeSelect) return;
-  const currentVal = state.filters.volume || 'all';
+export function createCustomSelect({ containerId, labelId, menuId, options, currentValue, onSelect }) {
+  const container = document.getElementById(containerId);
+  const labelEl = document.getElementById(labelId);
+  const menuEl = document.getElementById(menuId);
+  if (!container || !labelEl || !menuEl) return;
 
-  // 更新原生 select (作降级与状态同步)
-  els.volumeSelect.innerHTML = `<option value="all">${conv('全部卷次')}</option>`;
-  state.volumes.forEach(v => {
-    const opt = document.createElement('option');
-    opt.value = String(v.id);
-    opt.textContent = conv(v.fullName);
-    els.volumeSelect.appendChild(opt);
-  });
-  els.volumeSelect.value = currentVal;
+  menuEl.innerHTML = '';
 
-  // 渲染自定义下拉框 Custom Dropdown
-  const customMenu = document.getElementById('custom-select-menu');
-  const customLabel = document.getElementById('custom-select-label');
-  if (!customMenu || !customLabel) return;
+  const activeOpt = options.find(o => String(o.value) === String(currentValue)) || options[0];
+  if (activeOpt) {
+    labelEl.textContent = activeOpt.label;
+  }
 
-  customMenu.innerHTML = '';
-
-  const allOption = document.createElement('div');
-  allOption.className = `custom-select-item${currentVal === 'all' ? ' selected' : ''}`;
-  allOption.dataset.value = 'all';
-  allOption.textContent = conv('全部卷次');
-  customMenu.appendChild(allOption);
-
-  if (currentVal === 'all') customLabel.textContent = conv('全部卷次');
-
-  state.volumes.forEach(v => {
+  options.forEach(opt => {
     const item = document.createElement('div');
-    const isSelected = String(v.id) === String(currentVal);
+    const isSelected = String(opt.value) === String(currentValue);
     item.className = `custom-select-item${isSelected ? ' selected' : ''}`;
-    item.dataset.value = String(v.id);
-    item.textContent = conv(v.fullName);
-    if (isSelected) customLabel.textContent = conv(v.fullName);
-    customMenu.appendChild(item);
+    item.dataset.value = String(opt.value);
+    item.textContent = opt.label;
+
+    item.addEventListener('click', (e) => {
+      e.stopPropagation();
+      container.classList.remove('open');
+      const trigger = container.querySelector('.custom-select-trigger');
+      if (trigger) trigger.setAttribute('aria-expanded', 'false');
+
+      if (String(opt.value) !== String(currentValue)) {
+        onSelect(opt.value);
+      }
+    });
+
+    menuEl.appendChild(item);
   });
 }
 
-export function renderGenreTabs() {
-  if (!els.genreTabs) return;
-  els.genreTabs.innerHTML = `<button class="genre-tab${state.filters.genre === 'all' ? ' active' : ''}" data-genre="all">${conv('全部体裁')}</button>`;
-  state.genres.forEach(g => {
-    const btn = document.createElement('button');
-    btn.className = 'genre-tab' + (state.filters.genre === g ? ' active' : '');
-    btn.dataset.genre = g;
-    btn.textContent = conv(g);
-    els.genreTabs.appendChild(btn);
+export function renderViewModeSelect() {
+  const options = [
+    { value: 'volume', label: conv('卷次目录') },
+    { value: 'timeline', label: conv('创作年谱') }
+  ];
+
+  if (els.volumeSelectWrapper) {
+    els.volumeSelectWrapper.style.display = (state.viewMode === 'volume') ? '' : 'none';
+  }
+
+  createCustomSelect({
+    containerId: 'custom-view-select',
+    labelId: 'custom-view-label',
+    menuId: 'custom-view-menu',
+    options,
+    currentValue: state.viewMode,
+    onSelect: (val) => {
+      state.viewMode = val;
+      localStorage.setItem('view_mode', val);
+
+      if (els.volumeSelectWrapper) {
+        els.volumeSelectWrapper.style.display = (val === 'volume') ? '' : 'none';
+      }
+
+      applyFilters();
+
+      const collectionEl = document.getElementById('collection');
+      if (collectionEl) {
+        collectionEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  });
+}
+
+export function renderVolumeSelect() {
+  const options = [
+    { value: 'all', label: conv('全部卷次') },
+    ...state.volumes.map(v => ({ value: String(v.id), label: conv(v.fullName) }))
+  ];
+
+  if (els.volumeSelect) {
+    els.volumeSelect.innerHTML = options.map(o => `<option value="${o.value}">${o.label}</option>`).join('');
+    els.volumeSelect.value = state.filters.volume || 'all';
+  }
+
+  createCustomSelect({
+    containerId: 'custom-volume-select',
+    labelId: 'custom-volume-label',
+    menuId: 'custom-volume-menu',
+    options,
+    currentValue: state.filters.volume || 'all',
+    onSelect: (val) => {
+      state.filters.volume = val;
+      if (els.volumeSelect) els.volumeSelect.value = val;
+      applyFilters();
+
+      const firstCard = els.poemsContainer?.querySelector('.poem-card, .volume-preface-card, .timeline-node');
+      if (firstCard) {
+        firstCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  });
+}
+
+export function renderGenreSelect() {
+  const options = [
+    { value: 'all', label: conv('全部体裁') },
+    ...state.genres.map(g => ({ value: g, label: conv(g) }))
+  ];
+
+  if (els.genreSelect) {
+    els.genreSelect.innerHTML = options.map(o => `<option value="${o.value}">${o.label}</option>`).join('');
+    els.genreSelect.value = state.filters.genre || 'all';
+  }
+
+  createCustomSelect({
+    containerId: 'custom-genre-select',
+    labelId: 'custom-genre-label',
+    menuId: 'custom-genre-menu',
+    options,
+    currentValue: state.filters.genre || 'all',
+    onSelect: (val) => {
+      state.filters.genre = val;
+      if (els.genreSelect) els.genreSelect.value = val;
+      applyFilters();
+    }
   });
 }
 
@@ -216,7 +288,7 @@ function renderCollection(poems) {
 
 export function applyFilters() {
   let filtered = state.allPoems;
-  if (state.filters.volume !== 'all') {
+  if (state.viewMode === 'volume' && state.filters.volume !== 'all') {
     filtered = filtered.filter(p => String(p.volume) === String(state.filters.volume));
   }
   if (state.filters.genre !== 'all') {

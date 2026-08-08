@@ -55,36 +55,64 @@
 
   <section id="filter-section">
     <div class="filter-bar">
-      <div class="volume-select-group" id="volume-select-wrapper">
-        <select id="volume-select" aria-label="选择卷次" class="hidden-native-select">
+      <!-- 视图模式下拉框 (卷次目录 / 创作年谱) -->
+      <div class="filter-item view-select-group">
+        <select id="view-mode-select" class="hidden-native-select" aria-label="视图模式">
+          <option value="volume">卷次目录</option>
+          <option value="timeline">创作年谱</option>
         </select>
-        <div class="custom-select-container" id="custom-volume-select">
-          <button type="button" class="custom-select-trigger" id="custom-select-trigger" aria-haspopup="listbox" aria-expanded="false">
-            <span class="custom-select-label" id="custom-select-label">全部卷次</span>
+        <div class="custom-select-container" id="custom-view-select">
+          <button type="button" class="custom-select-trigger" id="custom-view-trigger">
+            <span class="custom-select-label" id="custom-view-label">卷次目录</span>
             <span class="custom-select-arrow"></span>
           </button>
-          <div class="custom-select-menu" id="custom-select-menu" role="listbox"></div>
+          <div class="custom-select-menu" id="custom-view-menu" role="listbox"></div>
         </div>
       </div>
-      <div class="genre-tabs" id="genre-tabs"></div>
-      <div class="view-mode-toggle" id="view-mode-toggle">
-        <button class="btn-view-mode active" data-mode="volume">卷次目录</button>
-        <button class="btn-view-mode" data-mode="timeline">创作年谱</button>
+
+      <!-- 卷次下拉框 (仅在卷次目录模式下显示) -->
+      <div class="filter-item volume-select-group" id="volume-select-wrapper">
+        <select id="volume-select" class="hidden-native-select" aria-label="选择卷次"></select>
+        <div class="custom-select-container" id="custom-volume-select">
+          <button type="button" class="custom-select-trigger" id="custom-volume-trigger">
+            <span class="custom-select-label" id="custom-volume-label">全部卷次</span>
+            <span class="custom-select-arrow"></span>
+          </button>
+          <div class="custom-select-menu" id="custom-volume-menu" role="listbox"></div>
+        </div>
       </div>
-      <div class="search-group">
+
+      <!-- 体裁下拉框 -->
+      <div class="filter-item genre-select-group" id="genre-select-wrapper">
+        <select id="genre-select" class="hidden-native-select" aria-label="选择体裁"></select>
+        <div class="custom-select-container" id="custom-genre-select">
+          <button type="button" class="custom-select-trigger" id="custom-genre-trigger">
+            <span class="custom-select-label" id="custom-genre-label">全部体裁</span>
+            <span class="custom-select-arrow"></span>
+          </button>
+          <div class="custom-select-menu" id="custom-genre-menu" role="listbox"></div>
+        </div>
+      </div>
+
+      <!-- 搜索框 -->
+      <div class="filter-item search-group">
         <input type="text" id="search-input" placeholder="检索诗词、句子或词牌…">
       </div>
-      <button class="btn-layout btn-random" id="btn-random-poem" title="随机一首">
-        <span class="random-text" id="random-text">随缘</span>
-      </button>
-      <button class="btn-layout btn-layout-dual" id="btn-toggle-layout" title="切换横排/竖排">
-        <span class="opt-layout opt-layout-vertical">竖</span>
-        <span class="opt-layout opt-layout-horizontal">横</span>
-      </button>
-      <button class="btn-layout btn-layout-dual" id="btn-toggle-lang" title="切换简繁体">
-        <span class="opt-lang opt-lang-simplified">简</span>
-        <span class="opt-lang opt-lang-traditional">繁</span>
-      </button>
+
+      <!-- 快捷功能按钮组 -->
+      <div class="filter-actions">
+        <button class="btn-layout btn-random" id="btn-random-poem" title="随机一首">
+          <span class="random-text" id="random-text">随缘</span>
+        </button>
+        <button class="btn-layout btn-layout-dual" id="btn-toggle-layout" title="切换横排/竖排">
+          <span class="opt-layout opt-layout-vertical">竖</span>
+          <span class="opt-layout opt-layout-horizontal">横</span>
+        </button>
+        <button class="btn-layout btn-layout-dual" id="btn-toggle-lang" title="切换简繁体">
+          <span class="opt-lang opt-lang-simplified">简</span>
+          <span class="opt-lang opt-lang-traditional">繁</span>
+        </button>
+      </div>
     </div>
   </section>
 
