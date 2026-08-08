@@ -5,7 +5,7 @@ import { isMobileScreen, updateLayoutToggleBtn, toggleVertical } from './layout.
 import { skipCinematicAnimation } from './animation.js';
 import { openDB, saveImage, compressImage } from './database.js';
 import { renderPoemImages, closeLightbox, updateLightboxImage } from './gallery.js';
-import { renderVolumeTabs, applyFilters } from './search.js';
+import { renderVolumeTabs, renderGenreTabs, applyFilters } from './search.js';
 import { closeReader, openPoemDetail } from './reader.js';
 import { alignVerticalTitleAndContent } from './layout.js';
 
@@ -51,6 +51,15 @@ import { alignVerticalTitleAndContent } from './layout.js';
         }
       });
     }
+    if (els.genreTabs) {
+      els.genreTabs.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('genre-tab')) return;
+        els.genreTabs.querySelectorAll('.genre-tab').forEach(t => t.classList.remove('active'));
+        e.target.classList.add('active');
+        state.filters.genre = e.target.dataset.genre;
+        applyFilters();
+      });
+    }
     if (els.searchInput) {
       els.searchInput.addEventListener('input', debounce((e) => {
         state.filters.search = e.target.value.trim();
@@ -74,6 +83,7 @@ import { alignVerticalTitleAndContent } from './layout.js';
         updateLangToggleBtn();
         updateStaticTexts();
         renderVolumeTabs();
+        renderGenreTabs();
         applyFilters();
         if (els.poemModal.classList.contains('active') && state.currentPoemIndex !== -1) {
           openPoemDetail(state.currentPoemIndex);
@@ -292,12 +302,14 @@ import { alignVerticalTitleAndContent } from './layout.js';
       if (!res.ok) throw new Error('网络请求异常');
       const data = await res.json();
       state.volumes = data.volumes || [];
+      state.genres = data.genres || [];
       state.allPoems = data.poems || [];
       await openDB();
       updateLayoutToggleBtn();
       updateLangToggleBtn();
       updateStaticTexts();
       renderVolumeTabs();
+      renderGenreTabs();
       applyFilters();
       initEventListeners();
       if (els.nav) {

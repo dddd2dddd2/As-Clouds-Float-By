@@ -15,6 +15,18 @@ import { openPoemDetail } from './reader.js';
     });
   }
 
+  export function renderGenreTabs() {
+    if (!els.genreTabs) return;
+    els.genreTabs.innerHTML = `<button class="genre-tab${state.filters.genre === 'all' ? ' active' : ''}" data-genre="all">${conv('全部体裁')}</button>`;
+    state.genres.forEach(g => {
+      const btn = document.createElement('button');
+      btn.className = 'genre-tab' + (state.filters.genre === g ? ' active' : '');
+      btn.dataset.genre = g;
+      btn.textContent = conv(g);
+      els.genreTabs.appendChild(btn);
+    });
+  }
+
   function renderCollection(poems) {
     if (!els.poemsContainer) return;
     els.poemsContainer.innerHTML = '';
@@ -66,6 +78,9 @@ import { openPoemDetail } from './reader.js';
     let filtered = state.allPoems;
     if (state.filters.volume !== 'all') {
       filtered = filtered.filter(p => String(p.volume) === String(state.filters.volume));
+    }
+    if (state.filters.genre !== 'all') {
+      filtered = filtered.filter(p => (p.genre || '') === state.filters.genre);
     }
     if (state.filters.search) {
       const q = state.filters.search.toLowerCase();

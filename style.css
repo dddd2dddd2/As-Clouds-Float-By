@@ -651,6 +651,42 @@ body.fonts-loaded .hero-cta {
   font-weight: bold;
   border-color: var(--accent-gold);
 }
+.genre-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 0 24px;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.genre-tabs::-webkit-scrollbar {
+  display: none;
+}
+.genre-tab {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  padding: 6px 16px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  white-space: nowrap;
+  transition: var(--transition);
+}
+.genre-tab:hover {
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+}
+.genre-tab.active {
+  background-color: rgba(var(--accent-gold-rgb), 0.14);
+  color: var(--accent-gold);
+  font-weight: bold;
+  border-color: var(--accent-gold);
+}
 .filter-stats {
   max-width: var(--max-width);
   margin: 0 auto;

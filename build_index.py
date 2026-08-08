@@ -39,19 +39,6 @@ KNOWN_CIPAI = {
     "钗头凤", "凤凰台上忆吹箫", "永遇乐", "齐天乐",
 }
 
-# 文件名中的体裁指示词
-GENRE_MAP = {
-    "五古": "五言古诗",
-    "七古": "七言古诗",
-    "五律": "五言律诗",
-    "七律": "七言律诗",
-    "五绝": "五言绝句",
-    "七绝": "七言绝句",
-    "乐府": "乐府",
-    "歌行": "歌行",
-    "古风": "古风",
-}
-
 # 卷目录名正则：01_卷一_婉约怀人
 VOL_RE = re.compile(r"^(\d+)_卷([一二三四五六七八九十百千]+)_(.+)$")
 
@@ -85,15 +72,26 @@ def parse_filename(filename: str) -> tuple[str, str, str]:
     return parts[0], "", ""
 
 
-def detect_genre(cipai_hint: str) -> tuple[str, str]:
-    """根据文件名中的体裁提示，判断 (cipai, genre_category)"""
-    for key, genre in GENRE_MAP.items():
-        if key == cipai_hint or key in cipai_hint:
-            return cipai_hint, genre
+def detect_genre(cipai_hint: str, raw_genre: str = "") -> tuple[str, str]:
+    """根据词牌与体裁提示，精准判断 (cipai, genre_category)
+
+    归一化为三大体裁大类：词 / 近体诗 / 古体乐府。
+    词牌（KNOWN_CIPAI）强制归为“词”；律绝归为“近体诗”；古风乐府归为“古体乐府”。
+    """
+    # 1. 优先校验是否为已知词牌，若是词牌，强制归为“词”
     for known in KNOWN_CIPAI:
         if known == cipai_hint or cipai_hint.startswith(known):
-            return cipai_hint, "词"
-    return cipai_hint, "诗"
+            return known, "词"
+
+    # 2. 判断律绝近体诗
+    if any(k in cipai_hint or k in raw_genre for k in ["七律", "五律", "七绝", "五绝"]):
+        return cipai_hint, "近体诗"
+
+    # 3. 判断古风乐府
+    if any(k in cipai_hint or k in raw_genre for k in ["五古", "七古", "乐府", "歌行", "古风"]):
+        return cipai_hint, "古体乐府"
+
+    return cipai_hint, raw_genre or "诗"
 
 
 def parse_md(filepath: Path) -> tuple[str | None, str | None]:
@@ -246,7 +244,7 @@ def build_index():
                 continue
 
             seq, cipai_hint, _ = parse_filename(md.name)
-            cipai, genre = detect_genre(meta.get("cipai") or cipai_hint)
+            cipai, genre = detect_genre(meta.get("cipai") or cipai_hint, meta.get("genre") or "")
             title = meta.get("title", md.stem)
 
             # Scan for static images
@@ -261,7 +259,7 @@ def build_index():
                     "id": poem_id,
                     "title": title,
                     "cipai": cipai,
-                    "genre": meta.get("genre") or genre,
+                    "genre": genre,
                     "volume": vol["id"],
                     "source": f"{vol_dir.name}/{md.name}",
                     "content": content,

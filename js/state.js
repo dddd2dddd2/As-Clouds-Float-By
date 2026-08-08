@@ -7,8 +7,9 @@ export const state = {
 
     allPoems: [],
     volumes: [],
+    genres: [],
     currentPoemIndex: -1,
-    filters: { volume: 'all', search: '' },
+    filters: { volume: 'all', genre: 'all', search: '' },
     isVertical: (localStorage.getItem('layout_vertical') === 'true') ||
                 (localStorage.getItem('layout_vertical') === null && window.innerWidth >= 768),
     isCinematic: true, 
@@ -25,6 +26,7 @@ export const els = {
     navLinks: document.querySelector('.nav-links'),
     poemsContainer: document.getElementById('poems-container'),
     volumeTabs: document.getElementById('volume-tabs'),
+    genreTabs: document.getElementById('genre-tabs'),
     searchInput: document.getElementById('search-input'),
     btnRandomPoem: document.getElementById('btn-random-poem'),
     randomText: document.getElementById('random-text'),
