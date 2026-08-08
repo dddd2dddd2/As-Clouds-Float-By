@@ -18,6 +18,13 @@ import { alignVerticalTitleAndContent } from './layout.js';
     };
   }
 
+  function syncViewModeToggle() {
+    if (!els.viewModeToggle) return;
+    els.viewModeToggle.querySelectorAll('.btn-view-mode').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.mode === state.viewMode);
+    });
+  }
+
   function showToast(message, duration = 2500) {
     let container = document.getElementById('toast-container');
     if (!container) {
@@ -57,6 +64,16 @@ import { alignVerticalTitleAndContent } from './layout.js';
         els.genreTabs.querySelectorAll('.genre-tab').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
         state.filters.genre = e.target.dataset.genre;
+        applyFilters();
+      });
+    }
+    if (els.viewModeToggle) {
+      els.viewModeToggle.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('btn-view-mode')) return;
+        els.viewModeToggle.querySelectorAll('.btn-view-mode').forEach(t => t.classList.remove('active'));
+        e.target.classList.add('active');
+        state.viewMode = e.target.dataset.mode;
+        localStorage.setItem('view_mode', state.viewMode);
         applyFilters();
       });
     }
@@ -125,7 +142,7 @@ import { alignVerticalTitleAndContent } from './layout.js';
           isDragging = false;
           return;
         }
-        const isInteractive = e.target.closest('#btn-add-image, .gallery-item, #image-upload, .gallery-delete, .author-notes-details, .book-pagination');
+        const isInteractive = e.target.closest('#btn-add-image, .gallery-item, #image-upload, .gallery-delete, .author-notes-details, .book-pagination, .poem-genre-badge');
         if (!isInteractive) {
           if (els.poemModal.classList.contains('cinematic-mode') && !els.poemModal.classList.contains('skip-animation')) {
             skipCinematicAnimation();
@@ -308,6 +325,7 @@ import { alignVerticalTitleAndContent } from './layout.js';
       updateLayoutToggleBtn();
       updateLangToggleBtn();
       updateStaticTexts();
+      syncViewModeToggle();
       renderVolumeTabs();
       renderGenreTabs();
       applyFilters();

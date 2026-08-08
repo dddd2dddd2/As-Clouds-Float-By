@@ -1,0 +1,35 @@
+name: Auto Build Poetry Index
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - '云浮集_YunFuJi/**'
+      - 'build_index.py'
+
+permissions:
+  contents: write
+
+jobs:
+  build-index:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python 环境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 执行索引构建脚本
+        run: python build_index.py
+
+      - name: 自动提交更新后的 index.json
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "auto: 自动更新 index.json 诗词索引 [skip ci]"
+          file_pattern: 'index.json'

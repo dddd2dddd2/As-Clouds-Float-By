@@ -42,6 +42,58 @@ KNOWN_CIPAI = {
 # 卷目录名正则：01_卷一_婉约怀人
 VOL_RE = re.compile(r"^(\d+)_卷([一二三四五六七八九十百千]+)_(.+)$")
 
+# 中文数字 → 阿拉伯数字
+CN_NUM = {"〇": "0", "零": "0", "0": "0", "一": "1", "二": "2", "三": "3", "四": "4",
+          "五": "5", "六": "6", "七": "7", "八": "8", "九": "9"}
+
+
+def cn_to_int(s: str) -> int | None:
+    """将中文数字（如“二十六”“三”“十二”）转为整数，支持 0~99。"""
+    if not s:
+        return None
+    if all(ch in CN_NUM for ch in s):
+        return int("".join(CN_NUM[ch] for ch in s))
+    if "十" in s:
+        a, _, b = s.partition("十")
+        tens = int(CN_NUM[a]) if a and a in CN_NUM else 1
+        ones = int(CN_NUM[b]) if b and b in CN_NUM else 0
+        return tens * 10 + ones
+    return None
+
+
+def extract_sort_date(meta: dict, notes: str = "") -> str:
+    """提取用于排序的标准日期，格式 YYYY-MM-DD；无法识别则返回空字符串。"""
+    raw = (meta.get("date") or "").strip() or (meta.get("dateLocation") or "").strip()
+
+    # 1. YAML date 中的西历 2026-08-08 / 2026-8-8
+    m = re.search(r"(\d{4})[-/年.](\d{1,2})[-/月.](\d{1,2})", raw)
+    if m:
+        y, mo, d = (int(m.group(1)), int(m.group(2)), int(m.group(3)))
+        if 1 <= mo <= 12 and 1 <= d <= 31:
+            return f"{y:04d}-{mo:02d}-{d:02d}"
+
+    # 2. YAML date / notes 中的“二〇二六年八月八日”式中文纪日
+    haystack = raw or ""
+    if notes:
+        haystack = (haystack + "\n" + notes) if haystack else notes
+    m = re.search(r"([〇0一二三四五六七八九零]{4})年([一二三四五六七八九十]{1,2})月([一二三四五六七八九十]{1,3})日", haystack)
+    if m:
+        y = "".join(CN_NUM.get(ch, ch) for ch in m.group(1))
+        mo = cn_to_int(m.group(2))
+        d = cn_to_int(m.group(3))
+        if y.isdigit() and mo and d and 1 <= mo <= 12 and 1 <= d <= 31:
+            return f"{int(y):04d}-{mo:02d}-{d:02d}"
+
+    # 3. notes 中的西历“2026年8月8日”式阿拉伯纪日
+    if notes:
+        m = re.search(r"(\d{4})年(\d{1,2})月(\d{1,2})日", notes)
+        if m:
+            y, mo, d = (int(m.group(1)), int(m.group(2)), int(m.group(3)))
+            if 1 <= mo <= 12 and 1 <= d <= 31:
+                return f"{y:04d}-{mo:02d}-{d:02d}"
+
+    return ""
+
 
 # ====================== 解析函数 ======================
 
@@ -254,6 +306,7 @@ def build_index():
                     static_images.append(f"{vol_dir.name}/{img.name}")
 
             poem_id = f"v{vol['id']}-{seq}"
+            notes = meta.get("notes", "")
             poems.append(
                 {
                     "id": poem_id,
@@ -265,8 +318,9 @@ def build_index():
                     "content": content,
                     "epigraph": meta.get("epigraph", ""),
                     "dateLocation": meta.get("dateLocation") or meta.get("date", ""),
+                    "dateSort": extract_sort_date(meta, notes),
                     "translation": meta.get("translation", ""),
-                    "notes": meta.get("notes", ""),
+                    "notes": notes,
                     "staticImages": static_images,
                 }
             )

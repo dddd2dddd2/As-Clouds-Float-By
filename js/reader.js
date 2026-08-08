@@ -3,6 +3,7 @@ import { conv } from './language.js';
 import { clearCinematicTimers, formatPoemContentCinematic, triggerInkSplash } from './animation.js';
 import { renderPoemImages } from './gallery.js';
 import { resetReaderScrollPositions, alignVerticalTitleAndContent } from './layout.js';
+import { CIPAI_DB } from './cipai_db.js';
 
 export function openReader() {
   els.poemModal.classList.add('active');
@@ -12,6 +13,41 @@ export function openReader() {
 export function closeReader() {
   els.poemModal.classList.remove('active');
   document.body.style.overflow = '';
+}
+
+export function showCipaiModal(cipaiName) {
+  const info = CIPAI_DB[cipaiName];
+  if (!info) return;
+
+  const popover = document.createElement('div');
+  popover.className = 'cipai-popover-modal';
+  popover.innerHTML = `
+    <div class="cipai-popover-card">
+      <button class="cipai-popover-close">&times;</button>
+      <h3 class="cipai-title">${conv(cipaiName)} <span class="cipai-alias">${info.alias ? '（又名：' + conv(info.alias) + '）' : ''}</span></h3>
+      <p class="cipai-tune"><strong>【体格律调】</strong>${conv(info.tune)}</p>
+      <p class="cipai-desc"><strong>【牌名释意】</strong>${conv(info.desc)}</p>
+      <div class="cipai-pattern"><strong>【经典平仄例】</strong><code>${conv(info.pattern)}</code></div>
+    </div>
+  `;
+
+  document.body.appendChild(popover);
+  requestAnimationFrame(() => popover.classList.add('active'));
+
+  const dismiss = () => {
+    popover.classList.remove('active');
+    setTimeout(() => popover.remove(), 300);
+  };
+  popover.querySelector('.cipai-popover-close').onclick = dismiss;
+  popover.addEventListener('click', (e) => {
+    if (e.target === popover) dismiss();
+  });
+  document.addEventListener('keydown', function escHandler(ev) {
+    if (ev.key === 'Escape') {
+      dismiss();
+      document.removeEventListener('keydown', escHandler);
+    }
+  });
 }
 
 export async function openPoemDetail(index) {
@@ -38,7 +74,15 @@ export async function openPoemDetail(index) {
     }
   }
 
-  if (els.poemGenreBadge) els.poemGenreBadge.textContent = conv(poem.cipai || poem.genre);
+  if (els.poemGenreBadge) {
+    const badgeText = poem.cipai || poem.genre;
+    els.poemGenreBadge.textContent = conv(badgeText);
+    els.poemGenreBadge.classList.toggle('has-cipai', !!CIPAI_DB[badgeText]);
+    els.poemGenreBadge.onclick = null;
+    if (CIPAI_DB[badgeText]) {
+      els.poemGenreBadge.onclick = () => showCipaiModal(badgeText);
+    }
+  }
   const vol = state.volumes.find(v => String(v.id) === String(poem.volume));
   if (els.poemVolumeBadge) els.poemVolumeBadge.textContent = vol ? conv(vol.fullName) : '';
   if (els.poemEpigraph) els.poemEpigraph.textContent = poem.epigraph ? `“${conv(poem.epigraph)}”` : '';

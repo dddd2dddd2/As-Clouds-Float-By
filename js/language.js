@@ -43,6 +43,11 @@ import { state, els } from './state.js';
     if (heroSubQuote) heroSubQuote.textContent = conv('浮云也有归时节');
     if (heroCta) heroCta.textContent = conv('翻阅诗集');
     if (els.randomText) els.randomText.textContent = conv('随缘');
+    const viewModeBtns = document.querySelectorAll('.btn-view-mode');
+    viewModeBtns.forEach(btn => {
+      if (btn.dataset.mode === 'volume') btn.textContent = conv('卷次目录');
+      if (btn.dataset.mode === 'timeline') btn.textContent = conv('创作年谱');
+    });
     if (footerTitle) footerTitle.innerHTML = '<span class="brand-cn">云浮集</span> · As Clouds Float By';
     if (footerSub) footerSub.textContent = conv('莫问春迟，且看云浮');
     if (navLinks.length >= 3) {
