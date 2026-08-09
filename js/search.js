@@ -232,7 +232,9 @@ function renderTimelineView(poems) {
     const vol = state.volumes.find(v => String(v.id) === String(poem.volume));
 
     let dateText = '';
-    if (poem.dateSort) {
+    if (poem.lunarDate) {
+      dateText = conv(poem.lunarDate);
+    } else if (poem.dateSort) {
       dateText = formatTimelineDate(poem.dateSort);
     } else if (poem.dateLocation) {
       dateText = conv(poem.dateLocation);

@@ -12,7 +12,6 @@ build_index.py — 《云浮集》索引构建器
 import json
 import re
 from pathlib import Path
-from datetime import datetime
 
 # ====================== 配置 ======================
 POETRY_DIR = "云浮集_YunFuJi"
@@ -59,6 +58,17 @@ def cn_to_int(s: str) -> int | None:
         ones = int(CN_NUM[b]) if b and b in CN_NUM else 0
         return tens * 10 + ones
     return None
+
+
+def extract_lunar_date(date_str: str) -> str:
+    """从 date 字段中提取农历日期，如 '2026-08-09（丙午年六月廿七）' → '丙午年六月廿七'"""
+    if not date_str:
+        return ""
+    m = re.search(r"([〇0一二三四五六七八九甲乙丙丁戊己庚辛壬癸子丑寅卯辰巳午未申酉戌亥]{2}年[一二三四五六七八九十]+月[初一二三四五六七八九十廿卅]+)", date_str)
+    if m:
+        return m.group(1)
+    m = re.search(r"([一二三四五六七八九十]{2}年[一二三四五六七八九十]+月[初一二三四五六七八九十廿卅]+)", date_str)
+    return m.group(1) if m else ""
 
 
 def extract_sort_date(meta: dict, notes: str = "") -> str:
@@ -307,6 +317,7 @@ def build_index():
 
             poem_id = f"v{vol['id']}-{seq}"
             notes = meta.get("notes", "")
+            date_str = meta.get("dateLocation") or meta.get("date", "")
             poems.append(
                 {
                     "id": poem_id,
@@ -317,7 +328,8 @@ def build_index():
                     "source": f"{vol_dir.name}/{md.name}",
                     "content": content,
                     "epigraph": meta.get("epigraph", ""),
-                    "dateLocation": meta.get("dateLocation") or meta.get("date", ""),
+                    "dateLocation": date_str,
+                    "lunarDate": extract_lunar_date(date_str),
                     "dateSort": extract_sort_date(meta, notes),
                     "translation": meta.get("translation", ""),
                     "notes": notes,
@@ -330,6 +342,8 @@ def build_index():
             print(f"    ✓ [{genre:　<4}] {title}")
 
     # 构建索引对象
+    dated = [p["dateSort"] for p in poems if p["dateSort"]]
+    last_updated = max(dated) if dated else ""
     index = {
         "meta": {
             "title": "云浮集",
@@ -338,7 +352,7 @@ def build_index():
             "introduction": preface["introduction"],
             "preface": preface["preface"],
             "totalPoems": len(poems),
-            "lastUpdated": datetime.now().isoformat(),
+            "lastUpdated": last_updated,
         },
         "volumes": [volumes[k] for k in sorted(volumes)],
         "genres": sorted(genres_found),

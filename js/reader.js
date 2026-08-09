@@ -86,7 +86,7 @@ export async function openPoemDetail(index) {
   const vol = state.volumes.find(v => String(v.id) === String(poem.volume));
   if (els.poemVolumeBadge) els.poemVolumeBadge.textContent = vol ? conv(vol.fullName) : '';
   if (els.poemEpigraph) els.poemEpigraph.textContent = poem.epigraph ? `“${conv(poem.epigraph)}”` : '';
-  if (els.poemDateLocation) els.poemDateLocation.textContent = conv(poem.dateLocation || '');
+  if (els.poemDateLocation) els.poemDateLocation.textContent = conv(poem.lunarDate || poem.dateLocation || '');
 
   if (els.poemTranslationBlock && els.poemTranslationText) {
     if (poem.translation) {
