@@ -187,7 +187,9 @@
       "dateSort": "",
       "translation": "",
       "notes": "",
-      "staticImages": []
+      "staticImages": [
+        "01_卷一_帘栊幽梦/08_一剪梅_一树空明.png"
+      ]
     },
     {
       "id": "v2-01",
@@ -477,7 +479,7 @@
     },
     {
       "id": "v5-01",
-      "title": "七律 寒村秋暮",
+      "title": "七律·寒村秋暮",
       "cipai": "七律",
       "genre": "近体诗",
       "volume": 5,
