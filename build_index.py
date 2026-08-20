@@ -18,7 +18,7 @@ POETRY_DIR = "云浮集_YunFuJi"
 OUTPUT_FILE = "index.json"
 
 # 跳过的子目录（非诗词内容）
-SKIP_DIRS = {"05_设计与排版装帧", "07_其他"}
+SKIP_DIRS = {"99_其他"}
 
 # 前言目录（单独处理，不计入诗词）
 PREFACE_DIR = "00_总纲与序言"

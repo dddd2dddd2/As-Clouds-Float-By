@@ -275,7 +275,7 @@ body.fonts-loaded #main-nav {
   position: absolute;
   inset: 0;
   z-index: 0;
-  background-image: url("./云浮集_YunFuJi/07_其他/Front.png"),
+  background-image: url("./云浮集_YunFuJi/99_其他/Front.png"),
                     radial-gradient(circle at 50% 30%, var(--bg-vignette-inner) 0%, var(--bg-primary) 80%);
   background-size: cover;
   background-position: center;
