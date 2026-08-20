@@ -285,7 +285,7 @@ def build_index():
     for vol_dir in sorted(poetry_root.iterdir()):
         if not vol_dir.is_dir():
             continue
-        if vol_dir.name in SKIP_DIRS or vol_dir.name == PREFACE_DIR or vol_dir.name.startswith("07_"):
+        if vol_dir.name in SKIP_DIRS or vol_dir.name == PREFACE_DIR:
             continue
             
         IMAGE_EXTS = {".png", ".jpg", ".jpeg", ".gif", ".webp"}

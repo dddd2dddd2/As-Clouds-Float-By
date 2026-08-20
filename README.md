@@ -4,7 +4,7 @@ https://dddd2dddd2.github.io/As-Clouds-Float-By/
 > 莫问春迟，且看云浮；浮云也有归时节。
 > *Ask not why spring tarries — just watch the clouds drift by; even the drifting clouds have a season to return.*
 
-《云浮集》是一部原创古典诗词集，收录以传统诗词形式（词、乐府、五言古诗、七言律诗）写就的作品，共六卷：
+《云浮集》是一部原创古典诗词集，收录以传统诗词形式（词、乐府、五言古诗、七言律诗）写就的作品，共七卷：
 
 *As Clouds Float By* is a collection of original classical Chinese poetry, written in traditional forms (ci 词, yuefu 乐府, five-character old poetry 五古, and regulated verse 七律), arranged in six volumes:
 
@@ -20,6 +20,8 @@ https://dddd2dddd2.github.io/As-Clouds-Float-By/
   *Volume V · Travels Far*: regulated verse and travel pieces on journeys, traffic, and everyday scenery
 - **卷六 · 青史惊澜**：贺新郎怀古咏史、历史人物独白之作
   *Volume VI · Tumult in the Annals*: Hexinlang pieces on history and dramatic monologues of historical figures
+- **卷七 · 乘风化境**：歌行体写凌云乘风、星月奇境之作
+  *Volume VII · Transcending with the Wind*: songs of soaring through wind, stars, and moonlit realms
 
 本项目附带一个简单的静态网页（`index.html`、`style.css`、`js/`），用于在线浏览与展示全部诗词。
 
