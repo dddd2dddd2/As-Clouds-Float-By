@@ -12,15 +12,23 @@ export function createCustomSelect({ containerId, labelId, menuId, options, curr
 
   menuEl.innerHTML = '';
 
-  const activeOpt = options.find(o => String(o.value) === String(currentValue)) || options[0];
-  if (activeOpt) {
+  // 记录当前生效值（实时更新，避免闭包捕获过期值）
+  let current = currentValue;
+
+  const setActive = (value) => {
+    const activeOpt = options.find(o => String(o.value) === String(value)) || options[0];
+    if (!activeOpt) return;
     labelEl.textContent = activeOpt.label;
-  }
+    menuEl.querySelectorAll('.custom-select-item').forEach(item => {
+      item.classList.toggle('selected', String(item.dataset.value) === String(activeOpt.value));
+    });
+  };
+
+  setActive(current);
 
   options.forEach(opt => {
     const item = document.createElement('div');
-    const isSelected = String(opt.value) === String(currentValue);
-    item.className = `custom-select-item${isSelected ? ' selected' : ''}`;
+    item.className = 'custom-select-item';
     item.dataset.value = String(opt.value);
     item.textContent = opt.label;
 
@@ -30,7 +38,10 @@ export function createCustomSelect({ containerId, labelId, menuId, options, curr
       const trigger = container.querySelector('.custom-select-trigger');
       if (trigger) trigger.setAttribute('aria-expanded', 'false');
 
-      if (String(opt.value) !== String(currentValue)) {
+      // 与实时值比较，而不是渲染时捕获的旧值
+      if (String(opt.value) !== String(current)) {
+        current = opt.value;
+        setActive(current);
         onSelect(opt.value);
       }
     });
